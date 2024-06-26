@@ -15,7 +15,8 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth").permitAll() // 로그인 경로는 보안 검사에서 제외
+                .requestMatchers("/auth").permitAll()
+                .requestMatchers("/register").permitAll()
                 .anyRequest().authenticated(); // 그 외의 모든 요청은 인증이 필요
 
         return http.build();

@@ -10,13 +10,15 @@ public class AuthResponseDto {
     private String name;
     private boolean isJoined;
     private String accessToken;
+    private String refreshToken;
 
     @Builder
-    public AuthResponseDto(String grade, String major, String name, boolean isJoined, String accessToken) {
+    public AuthResponseDto(String grade, String major, String name, boolean isJoined, String accessToken, String refreshToken) {
         this.grade = grade;
         this.major = major;
         this.name = name;
         this.isJoined = isJoined;
         this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 }

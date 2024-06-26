@@ -3,11 +3,13 @@ package com.example.foreignstudentmatch.domain;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "refresh_token")
 public class RefreshToken {
 
@@ -40,6 +42,10 @@ public class RefreshToken {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public void updateExpiryDate(LocalDateTime newExpiryDate) {
+        this.expiryDate = newExpiryDate;
     }
 
     @Builder

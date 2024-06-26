@@ -2,8 +2,10 @@ package com.example.foreignstudentmatch.service;
 
 import com.example.foreignstudentmatch.domain.RefreshToken;
 import com.example.foreignstudentmatch.domain.Student;
-import com.example.foreignstudentmatch.dto.AuthResponseDto;
 import com.example.foreignstudentmatch.dto.AuthRequestDto;
+import com.example.foreignstudentmatch.dto.AuthResponseDto;
+import com.example.foreignstudentmatch.dto.RegisterRequestDto;
+import com.example.foreignstudentmatch.dto.RegisterResponseDto;
 import com.example.foreignstudentmatch.repository.RefreshTokenRepository;
 import com.example.foreignstudentmatch.repository.StudentRepository;
 import com.example.foreignstudentmatch.util.JwtTokenUtil;
@@ -14,6 +16,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -22,6 +25,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class AuthService {
 
     private final StudentRepository studentRepository;
@@ -71,19 +75,28 @@ public class AuthService {
                 if (isJoined) {
                     Student student = optionalStudent.get();
 
-                    // AccessToken과 RefreshToken 생성
+                    // AccessToken 생성
                     String accessToken = JwtTokenUtil.createToken(student.getStudentNumber(), secretKey, accessTokenExpiry);
-                    String refreshToken = JwtTokenUtil.createRefreshToken(student.getStudentNumber(), secretKey, refreshTokenExpiry);
 
-                    // RefreshToken을 DB에 저장
-                    RefreshToken refreshTokenEntity = RefreshToken
-                            .builder()
-                            .student(student)
-                            .token(refreshToken)
-                            .expiryDate(LocalDateTime.now().plusDays(7))
-                            .build();
-
-                    refreshTokenRepository.save(refreshTokenEntity);
+                    // 기존에 발급된 RefreshToken이 있는지 확인
+                    Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByStudent(student);
+                    String refreshToken;
+                    if (optionalRefreshToken.isPresent()) {
+                        // 기존 RefreshToken이 있다면, 만료 시간을 업데이트
+                        RefreshToken existingRefreshToken = optionalRefreshToken.get();
+                        existingRefreshToken.updateExpiryDate(LocalDateTime.now().plusDays(7));
+                        refreshToken = existingRefreshToken.getToken();
+                    } else {
+                        // 기존 RefreshToken이 없다면, 새로 생성
+                        refreshToken = JwtTokenUtil.createRefreshToken(student.getStudentNumber(), secretKey, refreshTokenExpiry);
+                        RefreshToken refreshTokenEntity = RefreshToken
+                                .builder()
+                                .student(student)
+                                .token(refreshToken)
+                                .expiryDate(LocalDateTime.now().plusDays(7))
+                                .build();
+                        refreshTokenRepository.save(refreshTokenEntity);
+                    }
 
                     // AuthResponseDto에 토큰 정보 추가
                     return AuthResponseDto.builder()
@@ -92,6 +105,7 @@ public class AuthService {
                             .name((String) body.get("name"))
                             .isJoined(isJoined)
                             .accessToken(accessToken)
+                            .refreshToken(refreshToken)
                             .build();
                 }
             }
@@ -107,4 +121,43 @@ public class AuthService {
             throw new RuntimeException("Failed to parse response", e);
         }
     }
+
+    public RegisterResponseDto register(RegisterRequestDto registerRequestDto) {
+        // Student 엔티티로 변환
+        Student student = Student.builder()
+                .school(registerRequestDto.getSchool())
+                .major(registerRequestDto.getMajor())
+                .name(registerRequestDto.getName())
+                .studentNumber(registerRequestDto.getStudentNumber())
+                .grade(registerRequestDto.getGrade())
+                .mbti(registerRequestDto.getMbti())
+                .language(registerRequestDto.getLanguage())
+                .interestsKorean(registerRequestDto.getInterestsKorean())
+                .interestsEnglish(registerRequestDto.getInterestsEnglish())
+                .isKorean(registerRequestDto.isKorean())
+                .build();
+
+        // DB에 저장
+        studentRepository.save(student);
+
+        // AccessToken과 RefreshToken 생성
+        String accessToken = JwtTokenUtil.createToken(student.getStudentNumber(), secretKey, accessTokenExpiry);
+        String refreshToken = JwtTokenUtil.createRefreshToken(student.getStudentNumber(), secretKey, refreshTokenExpiry);
+
+        // RefreshToken을 DB에 저장
+        RefreshToken refreshTokenEntity = RefreshToken.builder()
+                .student(student)
+                .token(refreshToken)
+                .expiryDate(LocalDateTime.now().plusDays(7))
+                .build();
+        refreshTokenRepository.save(refreshTokenEntity);
+
+        // 응답 DTO 생성 및 반환
+        return RegisterResponseDto.builder()
+                .studentId(student.getId())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
 }
