@@ -85,7 +85,7 @@ public class AuthService {
                         // 기존 RefreshToken이 있다면, 만료 시간을 업데이트
                         RefreshToken existingRefreshToken = optionalRefreshToken.get();
                         existingRefreshToken.updateExpiryDate(LocalDateTime.now().plusDays(7));
-                        refreshToken = existingRefreshToken.getToken();
+                     refreshToken = existingRefreshToken.getToken();
                     } else {
                         // 기존 RefreshToken이 없다면, 새로 생성
                         refreshToken = JwtTokenUtil.createRefreshToken(student.getStudentNumber(), secretKey, refreshTokenExpiry);
