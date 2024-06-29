@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(name = "comment")
 public class Comment extends BaseTimeEntity {
 
     @Id
@@ -33,19 +34,18 @@ public class Comment extends BaseTimeEntity {
     }
 
     // Student와의 다대일(N:1) 관계를 설정하는 메소드
-    public void setStudent(Student student) {
+    private void setStudent(Student student) {
         this.student = student;
         student.getComments().add(this); // Student 엔티티에도 Comment를 추가
     }
 
     // update
-    public void update(String content) {
+    private void update(String content) {
         this.content = content;
     }
 
     @Builder
-    public Comment(Long id, String content, Student student, Board board) {
-        this.id = id;
+    public Comment(String content, Student student, Board board) {
         this.content = content;
         setStudent(student);
         setBoard(board);
