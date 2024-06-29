@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,31 +19,28 @@ public class Board extends BaseTimeEntity {
     @Id @GeneratedValue
     private Long id;
 
-    @Column(name = "title", nullable = false)
     private String title;
-
-    @Column(name = "content", nullable = false)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
     public Student student;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 10)
     private List<Comment> comments; // 댓글
 
     @Column(name = "comment_count")
     private Integer commentCount;     // 댓글 수
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 10)
     private List<Like> likes; // 좋아요
 
     @Column(name = "like_count")
     private Integer likeCount;     // 좋아요 수
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 10)
     private List<UploadImage> uploadImages = new ArrayList<>();
 
