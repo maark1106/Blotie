@@ -1,4 +1,4 @@
-package com.example.foreignstudentmatch.dto;
+package com.example.foreignstudentmatch.dto.auth;
 
 import lombok.Builder;
 import lombok.Getter;

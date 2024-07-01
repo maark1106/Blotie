@@ -2,10 +2,10 @@ package com.example.foreignstudentmatch.service;
 
 import com.example.foreignstudentmatch.domain.RefreshToken;
 import com.example.foreignstudentmatch.domain.Student;
-import com.example.foreignstudentmatch.dto.AuthRequestDto;
-import com.example.foreignstudentmatch.dto.AuthResponseDto;
-import com.example.foreignstudentmatch.dto.RegisterRequestDto;
-import com.example.foreignstudentmatch.dto.RegisterResponseDto;
+import com.example.foreignstudentmatch.dto.auth.AuthRequestDto;
+import com.example.foreignstudentmatch.dto.auth.AuthResponseDto;
+import com.example.foreignstudentmatch.dto.auth.RegisterRequestDto;
+import com.example.foreignstudentmatch.dto.auth.RegisterResponseDto;
 import com.example.foreignstudentmatch.repository.RefreshTokenRepository;
 import com.example.foreignstudentmatch.repository.StudentRepository;
 import com.example.foreignstudentmatch.util.JwtTokenUtil;
