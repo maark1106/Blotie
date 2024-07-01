@@ -48,13 +48,16 @@ public class FeedService {
 
     private void uploadImages(List<MultipartFile> images, Feed feed) throws IOException {
         List<UploadImage> uploadImages = new ArrayList<>();
+
         for (MultipartFile image : images) {
             if (image != null && !image.isEmpty()) {
-                String imageUrl = s3Uploader.upload(image, "feeds");
+                String filename = s3Uploader.upload(image, "feeds");
+
                 UploadImage uploadImage = UploadImage.builder()
                         .feed(feed)
-                        .filename(imageUrl)
+                        .filename(filename)
                         .build();
+
                 uploadImages.add(uploadImage);
                 uploadImageRepository.save(uploadImage);
             }
