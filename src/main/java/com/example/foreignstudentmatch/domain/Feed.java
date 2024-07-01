@@ -31,14 +31,14 @@ public class Feed extends BaseTimeEntity {
     private List<Comment> comments; // 댓글
 
     @Column(name = "comment_count")
-    private Integer commentCount;     // 댓글 수
+    private Integer commentCount = 0;     // 댓글 수
 
     @OneToMany(mappedBy = "feed", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 10)
     private List<Like> likes; // 좋아요
 
     @Column(name = "like_count")
-    private Integer likeCount;     // 좋아요 수
+    private Integer likeCount = 0;     // 좋아요 수
 
     @OneToMany(mappedBy = "feed", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 10)

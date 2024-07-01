@@ -3,7 +3,6 @@ package com.example.foreignstudentmatch.service;
 import com.example.foreignstudentmatch.domain.Feed;
 import com.example.foreignstudentmatch.domain.Student;
 import com.example.foreignstudentmatch.domain.UploadImage;
-import com.example.foreignstudentmatch.dto.ResponseDto;
 import com.example.foreignstudentmatch.dto.feed.FeedSaveResponseDto;
 import com.example.foreignstudentmatch.repository.FeedRepository;
 import com.example.foreignstudentmatch.repository.StudentRepository;
@@ -21,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FeedService {
 
-    private final S3Uploader s3Uploader;
+    private final S3UploadService s3UploadService;
     private final FeedRepository feedRepository;
     private final StudentRepository studentRepository;
     private final UploadImageRepository uploadImageRepository;
@@ -51,7 +50,7 @@ public class FeedService {
 
         for (MultipartFile image : images) {
             if (image != null && !image.isEmpty()) {
-                String filename = s3Uploader.upload(image, "feeds");
+                String filename = s3UploadService.upload(image, "feeds");
 
                 UploadImage uploadImage = UploadImage.builder()
                         .feed(feed)
