@@ -16,7 +16,7 @@ import java.util.List;
 @Table(name = "feed")
 public class Feed extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;

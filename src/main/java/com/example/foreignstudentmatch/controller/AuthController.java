@@ -24,11 +24,11 @@ public class AuthController {
 
     @PostMapping("/auth")
     public ResponseDto<?> auth(@RequestBody AuthRequestDto loginRequestDto) {
-        return new ResponseDto<AuthResponseDto>(authService.auth(loginRequestDto));
+        return new ResponseDto<>(authService.auth(loginRequestDto));
     }
 
     @PostMapping("/register")
     public ResponseDto<?> register(@RequestBody RegisterRequestDto registerRequestDto) {
-        return new ResponseDto<RegisterResponseDto>(authService.register(registerRequestDto));
+        return new ResponseDto<>(authService.register(registerRequestDto));
     }
 }
