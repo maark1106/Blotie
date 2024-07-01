@@ -19,6 +19,8 @@ public class Comment extends BaseTimeEntity {
 
     private String content;
 
+    private String commentName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
     public Student student;
@@ -28,7 +30,7 @@ public class Comment extends BaseTimeEntity {
     public Feed feed;
 
     // Feed와의 다대일(N:1) 관계를 설정하는 메소드
-    public void setFeed(Feed feed) {
+    private void setFeed(Feed feed) {
         this.feed = feed;
         feed.getComments().add(this); // Feed 엔티티에도 Comment를 추가
     }
@@ -45,9 +47,10 @@ public class Comment extends BaseTimeEntity {
     }
 
     @Builder
-    public Comment(String content, Student student, Feed feed) {
+    public Comment(String content, Student student, Feed feed, String commentName) {
         this.content = content;
         setStudent(student);
         setFeed(feed);
+        this.commentName = commentName;
     }
 }

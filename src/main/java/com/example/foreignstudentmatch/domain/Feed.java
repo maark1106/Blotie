@@ -31,24 +31,24 @@ public class Feed extends BaseTimeEntity {
     private List<Comment> comments; // 댓글
 
     @Column(name = "comment_count")
-    private Integer commentCount = 0;     // 댓글 수
+    private int commentCount = 0;     // 댓글 수
 
     @OneToMany(mappedBy = "feed", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 10)
     private List<Like> likes; // 좋아요
 
     @Column(name = "like_count")
-    private Integer likeCount = 0;     // 좋아요 수
+    private int likeCount = 0;     // 좋아요 수
 
     @OneToMany(mappedBy = "feed", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 10)
     private List<UploadImage> uploadImages = new ArrayList<>();
 
-    public void commentChange(Integer commentCnt) {
+    public void commentChange(int commentCnt) {
         this.commentCount = commentCnt;
     }
 
-    public void likeChange(Integer likeCount) {
+    public void likeChange(int likeCount) {
         this.likeCount = likeCount;
     }
 
