@@ -20,22 +20,22 @@ public class Like {
     private Student student;      // 좋아요를 누른 유저
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private Board board;    // 좋아요가 추가된 게시글
+    @JoinColumn(name = "feed_id")
+    private Feed feed;    // 좋아요가 추가된 게시글
 
     private void setStudent(Student student) {
         this.student = student;
         student.getLikes().add(this);
     }
 
-    private void setBoard(Board board){
-        this.board = board;
-        board.getLikes().add(this);
+    private void setFeed(Feed feed){
+        this.feed = feed;
+        feed.getLikes().add(this);
     }
 
     @Builder
-    public Like(Student student, Board board){
+    public Like(Student student, Feed feed){
         setStudent(student);
-        setBoard(board);
+        setFeed(feed);
     }
 }

@@ -13,8 +13,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "board")
-public class Board extends BaseTimeEntity {
+@Table(name = "feed")
+public class Feed extends BaseTimeEntity {
 
     @Id @GeneratedValue
     private Long id;
@@ -26,21 +26,21 @@ public class Board extends BaseTimeEntity {
     @JoinColumn(name = "student_id")
     public Student student;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "feed", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 10)
     private List<Comment> comments; // 댓글
 
     @Column(name = "comment_count")
     private Integer commentCount;     // 댓글 수
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "feed", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 10)
     private List<Like> likes; // 좋아요
 
     @Column(name = "like_count")
     private Integer likeCount;     // 좋아요 수
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "feed", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 10)
     private List<UploadImage> uploadImages = new ArrayList<>();
 
@@ -58,14 +58,14 @@ public class Board extends BaseTimeEntity {
         this.content = content;
     }
 
-    //== Student & Board 연관관계 편의 메소드 ==//
+    //== Student & Feed 연관관계 편의 메소드 ==//
     private void setMappingStudent(Student student) {
         this.student = student;
-        student.getBoards().add(this);
+        student.getFeeds().add(this);
     }
 
     @Builder
-    public Board(Long id, String title, String content, Student student, List<UploadImage> uploadImages) {
+    public Feed(Long id, String title, String content, Student student, List<UploadImage> uploadImages) {
         this.id = id;
         this.title = title;
         this.content = content;

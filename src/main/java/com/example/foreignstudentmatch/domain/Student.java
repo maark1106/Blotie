@@ -55,7 +55,7 @@ public class Student {
     private List<RefreshToken> refreshTokens;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<Board> boards = new ArrayList<>();
+    private List<Feed> feeds = new ArrayList<>();
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();

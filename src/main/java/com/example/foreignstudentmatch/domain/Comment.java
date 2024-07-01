@@ -24,13 +24,13 @@ public class Comment extends BaseTimeEntity {
     public Student student;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    public Board board;
+    @JoinColumn(name = "feed_id")
+    public Feed feed;
 
-    // Board와의 다대일(N:1) 관계를 설정하는 메소드
-    public void setBoard(Board board) {
-        this.board = board;
-        board.getComments().add(this); // Board 엔티티에도 Comment를 추가
+    // Feed와의 다대일(N:1) 관계를 설정하는 메소드
+    public void setFeed(Feed feed) {
+        this.feed = feed;
+        feed.getComments().add(this); // Feed 엔티티에도 Comment를 추가
     }
 
     // Student와의 다대일(N:1) 관계를 설정하는 메소드
@@ -45,9 +45,9 @@ public class Comment extends BaseTimeEntity {
     }
 
     @Builder
-    public Comment(String content, Student student, Board board) {
+    public Comment(String content, Student student, Feed feed) {
         this.content = content;
         setStudent(student);
-        setBoard(board);
+        setFeed(feed);
     }
 }
