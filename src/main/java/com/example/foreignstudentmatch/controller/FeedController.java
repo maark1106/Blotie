@@ -2,6 +2,7 @@ package com.example.foreignstudentmatch.controller;
 
 import com.example.foreignstudentmatch.dto.ResponseDto;
 import com.example.foreignstudentmatch.dto.auth.RegisterResponseDto;
+import com.example.foreignstudentmatch.dto.feed.FeedUpdateRequestDto;
 import com.example.foreignstudentmatch.service.FeedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -37,9 +38,16 @@ public class FeedController {
         return new ResponseDto<>(feedService.getFeed(feedId));
     }
 
+    @PatchMapping("/{feed_id}")
+    public ResponseDto<?> updateFeed(@PathVariable("feed_id") Long feedId, @RequestBody FeedUpdateRequestDto requestDto) {
+        return new ResponseDto<>(feedService.updateFeed(feedId, requestDto));
+    }
+
     @DeleteMapping("/{feed_id}")
     public ResponseDto<?> deleteFeed(@PathVariable("feed_id") Long feedId) {
         feedService.deleteFeed(feedId);
         return new ResponseDto<>("200", "피드가 삭제되었습니다", null);
     }
+
+
 }

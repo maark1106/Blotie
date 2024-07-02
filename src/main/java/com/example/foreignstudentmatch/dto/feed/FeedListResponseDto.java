@@ -2,10 +2,11 @@ package com.example.foreignstudentmatch.dto.feed;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
-@Data
+@Getter
 @AllArgsConstructor
 public class FeedListResponseDto {
     private List<FeedResponseDto> feeds;

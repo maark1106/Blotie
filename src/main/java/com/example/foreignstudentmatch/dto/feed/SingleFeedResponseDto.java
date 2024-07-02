@@ -1,12 +1,13 @@
 package com.example.foreignstudentmatch.dto.feed;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
+@Builder
 public class SingleFeedResponseDto {
     private Long feedId;
     private String createdDate;

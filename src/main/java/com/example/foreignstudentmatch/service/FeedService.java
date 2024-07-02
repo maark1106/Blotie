@@ -107,22 +107,62 @@ public class FeedService {
                 .map(UploadImage::getFilename)
                 .collect(Collectors.toList());
 
-        return new SingleFeedResponseDto(
-                feed.getId(),
-                feed.getCreatedDate().toString(),
-                feed.getStudent().getProfileImage(),
-                feed.getStudent().getId(),
-                feed.getTitle(),
-                feed.getContent(),
-                images,
-                feed.getCommentCount(),
-                comments
-        );
+        return SingleFeedResponseDto.builder()
+                .feedId(feed.getId())
+                .createdDate(feed.getCreatedDate())
+                .profileImage(feed.getStudent().getProfileImage())
+                .studentId(feed.getStudent().getId())
+                .title(feed.getTitle())
+                .content(feed.getContent())
+                .images(images)
+                .commentsCount(feed.getCommentCount())
+                .comments(comments)
+                .build();
     }
 
+    @Transactional
     public void deleteFeed(Long feedId) {
         Feed deletedFeed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
         feedRepository.delete(deletedFeed);
+    }
+
+    @Transactional
+    public SingleFeedResponseDto updateFeed(Long feedId, FeedUpdateRequestDto requestDto) {
+        Feed feed = feedRepository.findById(feedId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+
+        if (requestDto.getTitle() != null) {
+            feed.update(requestDto.getTitle(), feed.getContent());
+        }
+        if (requestDto.getContent() != null) {
+            feed.update(feed.getTitle(), requestDto.getContent());
+        }
+
+        List<String> images = feed.getUploadImages().stream()
+                .map(uploadImage -> uploadImage.getFilename())
+                .collect(Collectors.toList());
+
+        List<FeedCommentResponseDto> comments = feed.getComments().stream()
+                .map(comment -> new FeedCommentResponseDto(
+                        comment.getId(),
+                        comment.getCreatedDate().toString(),
+                        comment.getCommentNumber(),
+                        comment.getStudent().getProfileImage(),
+                        comment.getContent()
+                ))
+                .collect(Collectors.toList());
+
+        return SingleFeedResponseDto.builder()
+                .feedId(feed.getId())
+                .createdDate(feed.getCreatedDate())
+                .profileImage(feed.getStudent().getProfileImage())
+                .studentId(feed.getStudent().getId())
+                .title(feed.getTitle())
+                .content(feed.getContent())
+                .images(images)
+                .commentsCount(feed.getCommentCount())
+                .comments(comments)
+                .build();
     }
 }
