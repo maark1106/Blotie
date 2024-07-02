@@ -53,7 +53,7 @@ public class CommentService {
                             .stream()
                             .map(comment -> comment.getStudent().getId())
                             .collect(Collectors.toSet());
-                    return "익명" + (studentIds.size() + 1);
+                    return "익명이 " + (studentIds.size() + 1);
                 });
     }
 }

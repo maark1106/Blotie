@@ -20,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @Slf4j
@@ -34,6 +36,12 @@ public class AuthService {
     private final String secretKey = "my-secret-key-123123"; // 실제 환경에서는 더 안전하게 관리
     private final long accessTokenExpiry = 1000 * 60 * 30; // 30분
     private final long refreshTokenExpiry = 1000 * 60 * 60 * 24 * 7; // 7일
+
+    // S3에 저장된 프로필 이미지 URL 목록
+    private final List<String> profileImages = List.of(
+            "https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%EC%BA%A1%EC%B3%901.png",
+            "https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%EC%BA%A1%EC%B3%902.jpg"
+    );
 
     public AuthResponseDto auth(AuthRequestDto loginRequestDto) {
 
@@ -69,8 +77,7 @@ public class AuthService {
 
                 // 로그인 시 이미 우리 앱에 가입되어 있는 회원이면 isJoined = true로 설정하고 accessToken과 refreshToken 생성
                 Optional<Student> optionalStudent = studentRepository.findByStudentNumber(loginRequestDto.getId());
-                isJoined = studentRepository.findByStudentNumber(loginRequestDto.getId())
-                        .isPresent();
+                isJoined = optionalStudent.isPresent();
 
                 if (isJoined) {
                     Student student = optionalStudent.get();
@@ -85,7 +92,7 @@ public class AuthService {
                         // 기존 RefreshToken이 있다면, 만료 시간을 업데이트
                         RefreshToken existingRefreshToken = optionalRefreshToken.get();
                         existingRefreshToken.updateExpiryDate(LocalDateTime.now().plusDays(7));
-                     refreshToken = existingRefreshToken.getToken();
+                        refreshToken = existingRefreshToken.getToken();
                     } else {
                         // 기존 RefreshToken이 없다면, 새로 생성
                         refreshToken = JwtTokenUtil.createRefreshToken(student.getStudentNumber(), secretKey, refreshTokenExpiry);
@@ -124,6 +131,8 @@ public class AuthService {
 
     public RegisterResponseDto register(RegisterRequestDto registerRequestDto) {
         // Student 엔티티로 변환
+        String profileImage = getRandomProfileImage();
+
         Student student = Student.builder()
                 .school(registerRequestDto.getSchool())
                 .major(registerRequestDto.getMajor())
@@ -135,6 +144,7 @@ public class AuthService {
                 .interestsKorean(registerRequestDto.getInterestsKorean())
                 .interestsEnglish(registerRequestDto.getInterestsEnglish())
                 .isKorean(registerRequestDto.isKorean())
+                .profileImage(profileImage)
                 .build();
 
         // DB에 저장
@@ -160,4 +170,9 @@ public class AuthService {
                 .build();
     }
 
+    private String getRandomProfileImage() {
+        Random random = new Random();
+        int index = random.nextInt(profileImages.size());
+        return profileImages.get(index);
+    }
 }

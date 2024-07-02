@@ -1,5 +1,6 @@
 package com.example.foreignstudentmatch.domain;
 
+import com.example.foreignstudentmatch.common.BaseTimeEntity;
 import com.example.foreignstudentmatch.util.ListToStringConverter;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Table(name = "student")
-public class Student {
+public class Student extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -51,6 +52,9 @@ public class Student {
     @Column(name = "is_korean", nullable = false)
     private boolean isKorean;
 
+    @Column(name = "profile_image")
+    private String profileImage;
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<RefreshToken> refreshTokens;
 
@@ -64,7 +68,7 @@ public class Student {
     private List<Like> likes = new ArrayList<>();
 
     @Builder
-    public Student(String name, String school, String major, String studentNumber, int grade, String mbti, List<String> language, List<String> interestsKorean, List<String> interestsEnglish, boolean isKorean) {
+    public Student(String name, String school, String major, String studentNumber, int grade, String mbti, List<String> language, List<String> interestsKorean, List<String> interestsEnglish, boolean isKorean, String profileImage) {
         this.name = name;
         this.school = school;
         this.major = major;
@@ -75,5 +79,6 @@ public class Student {
         this.interestsKorean = interestsKorean;
         this.interestsEnglish = interestsEnglish;
         this.isKorean = isKorean;
+        this.profileImage = profileImage;
     }
 }
