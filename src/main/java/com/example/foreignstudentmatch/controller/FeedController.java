@@ -4,10 +4,7 @@ import com.example.foreignstudentmatch.dto.ResponseDto;
 import com.example.foreignstudentmatch.dto.auth.RegisterResponseDto;
 import com.example.foreignstudentmatch.service.FeedService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -28,5 +25,10 @@ public class FeedController {
             @RequestParam("images") List<MultipartFile> images
     ) throws IOException {
         return new ResponseDto<>(feedService.saveFeed(studentId, title, content, images));
+    }
+
+    @GetMapping
+    public ResponseDto<?> getFeeds(@RequestParam(value = "page", defaultValue = "1") int page) {
+        return new ResponseDto<>(feedService.getFeeds(page));
     }
 }
