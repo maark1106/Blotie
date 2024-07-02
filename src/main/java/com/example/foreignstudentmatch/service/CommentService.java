@@ -28,13 +28,13 @@ public class CommentService {
         Feed feed = feedRepository.findById(feedId).orElseThrow(() -> new IllegalArgumentException("피드를 찾을 수 없습니다."));
         Student student = studentRepository.findById(commentSaveRequestDto.getStudentId()).orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
 
-        String commentName = getOrCreateCommentName(feed, student);
+        int commentNumber = getOrCreateCommentNumber(feed, student);
 
         Comment comment = Comment.builder()
                 .feed(feed)
                 .student(student)
                 .content(commentSaveRequestDto.getContent())
-                .commentName(commentName)
+                .commentNumber(commentNumber)
                 .build();
 
         commentRepository.save(comment);
@@ -43,17 +43,17 @@ public class CommentService {
         return new CommentSaveResponseDto(comment.getId());
     }
 
-    private String getOrCreateCommentName(Feed feed, Student student) {
+    private int getOrCreateCommentNumber(Feed feed, Student student) {
         return commentRepository.findByFeedAndStudent(feed, student)
                 .stream()
                 .findFirst()
-                .map(Comment::getCommentName)
+                .map(Comment::getCommentNumber)
                 .orElseGet(() -> {
                     Set<Long> studentIds = commentRepository.findByFeed(feed)
                             .stream()
                             .map(comment -> comment.getStudent().getId())
                             .collect(Collectors.toSet());
-                    return "익명이 " + (studentIds.size() + 1);
+                    return studentIds.size() + 1;
                 });
     }
 }

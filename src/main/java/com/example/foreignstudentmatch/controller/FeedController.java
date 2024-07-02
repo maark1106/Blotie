@@ -31,4 +31,9 @@ public class FeedController {
     public ResponseDto<?> getFeeds(@RequestParam(value = "page", defaultValue = "1") int page) {
         return new ResponseDto<>(feedService.getFeeds(page));
     }
+
+    @GetMapping("/{feed_id}")
+    public ResponseDto<?> getFeed(@PathVariable("feed_id") Long feedId) {
+        return new ResponseDto<>(feedService.getFeed(feedId));
+    }
 }

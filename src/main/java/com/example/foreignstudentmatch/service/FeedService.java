@@ -3,9 +3,7 @@ package com.example.foreignstudentmatch.service;
 import com.example.foreignstudentmatch.domain.Feed;
 import com.example.foreignstudentmatch.domain.Student;
 import com.example.foreignstudentmatch.domain.UploadImage;
-import com.example.foreignstudentmatch.dto.feed.FeedListResponseDto;
-import com.example.foreignstudentmatch.dto.feed.FeedResponseDto;
-import com.example.foreignstudentmatch.dto.feed.FeedSaveResponseDto;
+import com.example.foreignstudentmatch.dto.feed.*;
 import com.example.foreignstudentmatch.repository.FeedRepository;
 import com.example.foreignstudentmatch.repository.StudentRepository;
 import com.example.foreignstudentmatch.repository.UploadImageRepository;
@@ -79,7 +77,6 @@ public class FeedService {
                 .map(feed -> new FeedResponseDto(
                         feed.getId(),
                         feed.getCreatedDate(),
-                        "익명이",
                         feed.getStudent().getProfileImage(),
                         feed.getTitle(),
                         feed.getContent(),
@@ -89,5 +86,37 @@ public class FeedService {
                 .collect(Collectors.toList());
 
         return new FeedListResponseDto(feedList, page, feedPage.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public SingleFeedResponseDto getFeed(Long feedId) {
+        Feed feed = feedRepository.findById(feedId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+
+        List<FeedCommentResponseDto> comments = feed.getComments().stream()
+                .map(comment -> new FeedCommentResponseDto(
+                        comment.getId(),
+                        comment.getCreatedDate().toString(),
+                        comment.getCommentNumber(),
+                        comment.getStudent().getProfileImage(),
+                        comment.getContent()
+                ))
+                .collect(Collectors.toList());
+
+        List<String> images = feed.getUploadImages().stream()
+                .map(UploadImage::getFilename)
+                .collect(Collectors.toList());
+
+        return new SingleFeedResponseDto(
+                feed.getId(),
+                feed.getCreatedDate().toString(),
+                feed.getStudent().getProfileImage(),
+                feed.getStudent().getId(),
+                feed.getTitle(),
+                feed.getContent(),
+                images,
+                feed.getCommentCount(),
+                comments
+        );
     }
 }
