@@ -119,4 +119,10 @@ public class FeedService {
                 comments
         );
     }
+
+    public void deleteFeed(Long feedId) {
+        Feed deletedFeed = feedRepository.findById(feedId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+        feedRepository.delete(deletedFeed);
+    }
 }

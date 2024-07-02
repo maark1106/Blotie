@@ -36,4 +36,10 @@ public class FeedController {
     public ResponseDto<?> getFeed(@PathVariable("feed_id") Long feedId) {
         return new ResponseDto<>(feedService.getFeed(feedId));
     }
+
+    @DeleteMapping("/{feed_id}")
+    public ResponseDto<?> deleteFeed(@PathVariable("feed_id") Long feedId) {
+        feedService.deleteFeed(feedId);
+        return new ResponseDto<>("200", "피드가 삭제되었습니다", null);
+    }
 }
