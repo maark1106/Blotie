@@ -1,10 +1,7 @@
 package com.example.foreignstudentmatch.dto.feed;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -16,4 +13,5 @@ public class FeedResponseDto {
     private String content;
     private int likeCount;
     private int commentCount;
+    private boolean isLike;
 }

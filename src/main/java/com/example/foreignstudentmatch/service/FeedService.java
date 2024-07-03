@@ -5,6 +5,7 @@ import com.example.foreignstudentmatch.domain.Student;
 import com.example.foreignstudentmatch.domain.UploadImage;
 import com.example.foreignstudentmatch.dto.feed.*;
 import com.example.foreignstudentmatch.repository.FeedRepository;
+import com.example.foreignstudentmatch.repository.LikeRepository;
 import com.example.foreignstudentmatch.repository.StudentRepository;
 import com.example.foreignstudentmatch.repository.UploadImageRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +28,7 @@ public class FeedService {
     private final FeedRepository feedRepository;
     private final StudentRepository studentRepository;
     private final UploadImageRepository uploadImageRepository;
+    private final LikeRepository likeRepository;
 
     @Transactional
     public FeedSaveResponseDto saveFeed(Long studentId, String title, String content, List<MultipartFile> images) throws IOException {
@@ -50,8 +51,6 @@ public class FeedService {
     }
 
     private void uploadImages(List<MultipartFile> images, Feed feed) throws IOException {
-        List<UploadImage> uploadImages = new ArrayList<>();
-
         for (MultipartFile image : images) {
             if (image != null && !image.isEmpty()) {
                 String filename = s3UploadService.upload(image, "feeds");
@@ -61,14 +60,13 @@ public class FeedService {
                         .filename(filename)
                         .build();
 
-                uploadImages.add(uploadImage);
                 uploadImageRepository.save(uploadImage);
             }
         }
     }
 
     @Transactional(readOnly = true)
-    public FeedListResponseDto getFeeds(int page) {
+    public FeedListResponseDto getFeeds(int page, Long studentId) {
         int pageSize = 4; // 페이지당 게시글 수
         Pageable pageable = PageRequest.of(page - 1, pageSize);
         Page<Feed> feedPage = feedRepository.findAllByOrderByCreatedDateDesc(pageable);
@@ -76,12 +74,13 @@ public class FeedService {
         List<FeedResponseDto> feedList = feedPage.stream()
                 .map(feed -> new FeedResponseDto(
                         feed.getId(),
-                        feed.getCreatedDate(),
+                        feed.getCreatedDate().toString(),
                         feed.getStudent().getProfileImage(),
                         feed.getTitle(),
                         feed.getContent(),
                         feed.getLikeCount(),
-                        feed.getCommentCount()
+                        feed.getCommentCount(),
+                        likeRepository.findByStudentIdAndFeedId(studentId, feed.getId()).isPresent() // 좋아요 여부
                 ))
                 .collect(Collectors.toList());
 
@@ -89,14 +88,14 @@ public class FeedService {
     }
 
     @Transactional(readOnly = true)
-    public SingleFeedResponseDto getFeed(Long feedId) {
+    public SingleFeedResponseDto getFeed(Long feedId, Long studentId) {
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
 
         List<FeedCommentResponseDto> comments = feed.getComments().stream()
                 .map(comment -> new FeedCommentResponseDto(
                         comment.getId(),
-                        comment.getCreatedDate().toString(),
+                        comment.getCreatedDate(),
                         comment.getCommentNumber(),
                         comment.getStudent().getProfileImage(),
                         comment.getContent()
@@ -107,6 +106,8 @@ public class FeedService {
                 .map(UploadImage::getFilename)
                 .collect(Collectors.toList());
 
+        boolean isLike = likeRepository.findByStudentIdAndFeedId(studentId, feedId).isPresent();
+
         return SingleFeedResponseDto.builder()
                 .feedId(feed.getId())
                 .createdDate(feed.getCreatedDate())
@@ -115,6 +116,7 @@ public class FeedService {
                 .title(feed.getTitle())
                 .content(feed.getContent())
                 .images(images)
+                .isLike(isLike)
                 .commentsCount(feed.getCommentCount())
                 .comments(comments)
                 .build();
@@ -128,7 +130,7 @@ public class FeedService {
     }
 
     @Transactional
-    public SingleFeedResponseDto updateFeed(Long feedId, FeedUpdateRequestDto requestDto) {
+    public SingleFeedResponseDto updateFeed(Long feedId, Long studentId, FeedUpdateRequestDto requestDto) {
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
 
@@ -153,6 +155,8 @@ public class FeedService {
                 ))
                 .collect(Collectors.toList());
 
+        boolean isLike = likeRepository.findByStudentIdAndFeedId(studentId, feedId).isPresent();
+
         return SingleFeedResponseDto.builder()
                 .feedId(feed.getId())
                 .createdDate(feed.getCreatedDate())
@@ -161,6 +165,7 @@ public class FeedService {
                 .title(feed.getTitle())
                 .content(feed.getContent())
                 .images(images)
+                .isLike(isLike)
                 .commentsCount(feed.getCommentCount())
                 .comments(comments)
                 .build();

@@ -29,18 +29,22 @@ public class FeedController {
     }
 
     @GetMapping
-    public ResponseDto<?> getFeeds(@RequestParam(value = "page", defaultValue = "1") int page) {
-        return new ResponseDto<>(feedService.getFeeds(page));
+    public ResponseDto<?> getFeeds(@RequestParam(value = "page", defaultValue = "1") int page,
+                                   @RequestParam("student_id") Long studentId) {
+        return new ResponseDto<>(feedService.getFeeds(page, studentId));
     }
 
     @GetMapping("/{feed_id}")
-    public ResponseDto<?> getFeed(@PathVariable("feed_id") Long feedId) {
-        return new ResponseDto<>(feedService.getFeed(feedId));
+    public ResponseDto<?> getFeed(@PathVariable("feed_id") Long feedId,
+                                  @RequestParam("student_id") Long studentId) {
+        return new ResponseDto<>(feedService.getFeed(feedId, studentId));
     }
 
     @PatchMapping("/{feed_id}")
-    public ResponseDto<?> updateFeed(@PathVariable("feed_id") Long feedId, @RequestBody FeedUpdateRequestDto requestDto) {
-        return new ResponseDto<>(feedService.updateFeed(feedId, requestDto));
+    public ResponseDto<?> updateFeed(@PathVariable("feed_id") Long feedId,
+                                     @RequestParam("student_id") Long studentId,
+                                     @RequestBody FeedUpdateRequestDto requestDto) {
+        return new ResponseDto<>(feedService.updateFeed(feedId, studentId, requestDto));
     }
 
     @DeleteMapping("/{feed_id}")

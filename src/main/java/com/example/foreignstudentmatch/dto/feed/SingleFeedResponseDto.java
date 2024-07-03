@@ -16,6 +16,7 @@ public class SingleFeedResponseDto {
     private String title;
     private String content;
     private List<String> images;
+    private boolean isLike;
     private int commentsCount;
     private List<FeedCommentResponseDto> comments;
 }
