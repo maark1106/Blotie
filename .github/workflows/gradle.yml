@@ -50,5 +50,8 @@ jobs:
       - name: Run application on remote server with dev profile
         run: |
           ssh -i /path/to/your/private-key.pem ec2-user@your-ec2-ip << 'EOF'
+            export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
             java -jar /usr/local/bin/your-application.jar --spring.profiles.active=dev
           EOF
+
