@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.example.foreignstudentmatch.util.ProfileImagesUrl.profileImages;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -37,11 +39,6 @@ public class AuthService {
     private final long accessTokenExpiry = 1000 * 60 * 30; // 30분
     private final long refreshTokenExpiry = 1000 * 60 * 60 * 24 * 7; // 7일
 
-    // S3에 저장된 프로필 이미지 URL 목록
-    private final List<String> profileImages = List.of(
-            "https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%EC%BA%A1%EC%B3%901.png",
-            "https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%EC%BA%A1%EC%B3%902.jpg"
-    );
 
     public AuthResponseDto auth(AuthRequestDto loginRequestDto) {
 
