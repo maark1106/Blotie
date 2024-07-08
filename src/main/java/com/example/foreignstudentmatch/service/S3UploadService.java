@@ -34,13 +34,15 @@ public class S3UploadService {
         log.info("fileName: " + fileName);
 
         InputStream inputStream = multipartFile.getInputStream();
-        String uploadImageUrl = putS3(inputStream, multipartFile.getSize(), fileName);
+        String uploadImageUrl = putS3(inputStream, multipartFile.getSize(), fileName, multipartFile.getContentType());
         return uploadImageUrl;
     }
 
-    private String putS3(InputStream inputStream, long contentLength, String fileName) {
+    private String putS3(InputStream inputStream, long contentLength, String fileName, String contentType) {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(contentLength);
+        metadata.setContentDisposition("inline");
+        metadata.setContentType(contentType);  // Content-Type 설정
         amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, metadata));
         return amazonS3.getUrl(bucket, fileName).toString();
     }
