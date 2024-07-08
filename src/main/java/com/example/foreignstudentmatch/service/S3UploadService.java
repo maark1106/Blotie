@@ -1,8 +1,10 @@
 package com.example.foreignstudentmatch.service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -61,5 +63,11 @@ public class S3UploadService {
         log.info("S3 oldFileName: " + oldFileName);
         deleteFile(oldFileName);
         return upload(newFile, dirName);
+    }
+
+    public byte[] downloadFile(String url) throws IOException {
+        S3Object s3Object = amazonS3.getObject(new GetObjectRequest(bucket, url));
+        InputStream inputStream = s3Object.getObjectContent();
+        return inputStream.readAllBytes();
     }
 }
