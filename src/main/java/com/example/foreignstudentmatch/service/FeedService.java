@@ -88,6 +88,50 @@ public class FeedService {
     }
 
     @Transactional(readOnly = true)
+    public FeedListResponseDto getFeedsByLikes(int page, Long studentId) {
+        int pageSize = 4; // 페이지당 게시글 수
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
+        Page<Feed> feedPage = feedRepository.findAllByOrderByLikeCountDesc(pageable);
+
+        List<FeedResponseDto> feedList = feedPage.stream()
+                .map(feed -> new FeedResponseDto(
+                        feed.getId(),
+                        feed.getCreatedDate().toString(),
+                        feed.getStudent().getProfileImage(),
+                        feed.getTitle(),
+                        feed.getContent(),
+                        feed.getLikeCount(),
+                        feed.getCommentCount(),
+                        likeRepository.findByStudentIdAndFeedId(studentId, feed.getId()).isPresent() // 좋아요 여부
+                ))
+                .collect(Collectors.toList());
+
+        return new FeedListResponseDto(feedList, page, feedPage.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public FeedListResponseDto getFeedsByStudent(int page, Long studentId) {
+        int pageSize = 4; // 페이지당 게시글 수
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
+        Page<Feed> feedPage = feedRepository.findAllByStudentIdOrderByCreatedDateDesc(studentId, pageable);
+
+        List<FeedResponseDto> feedList = feedPage.stream()
+                .map(feed -> new FeedResponseDto(
+                        feed.getId(),
+                        feed.getCreatedDate().toString(),
+                        feed.getStudent().getProfileImage(),
+                        feed.getTitle(),
+                        feed.getContent(),
+                        feed.getLikeCount(),
+                        feed.getCommentCount(),
+                        likeRepository.findByStudentIdAndFeedId(studentId, feed.getId()).isPresent() // 좋아요 여부
+                ))
+                .collect(Collectors.toList());
+
+        return new FeedListResponseDto(feedList, page, feedPage.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
     public SingleFeedResponseDto getFeed(Long feedId, Long studentId) {
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));

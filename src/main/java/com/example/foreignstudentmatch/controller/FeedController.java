@@ -34,6 +34,18 @@ public class FeedController {
         return new ResponseDto<>(feedService.getFeeds(page, studentId));
     }
 
+    @GetMapping("/likes")
+    public ResponseDto<?> getFeedsByLikes(@RequestParam(value = "page", defaultValue = "1") int page,
+                                          @RequestParam("student_id") Long studentId) {
+        return new ResponseDto<>(feedService.getFeedsByLikes(page, studentId));
+    }
+
+    @GetMapping("/student")
+    public ResponseDto<?> getFeedsByStudent(@RequestParam(value = "page", defaultValue = "1") int page,
+                                            @RequestParam("student_id") Long studentId) {
+        return new ResponseDto<>(feedService.getFeedsByStudent(page, studentId));
+    }
+
     @GetMapping("/{feed_id}")
     public ResponseDto<?> getFeed(@PathVariable("feed_id") Long feedId,
                                   @RequestParam("student_id") Long studentId) {
