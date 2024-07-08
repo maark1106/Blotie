@@ -20,6 +20,8 @@ public class Feed extends BaseTimeEntity {
     private Long id;
 
     private String title;
+
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,14 +30,14 @@ public class Feed extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "feed", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 10)
-    private List<Comment> comments; // 댓글
+    private List<Comment> comments = new ArrayList<>(); // 댓글
 
     @Column(name = "comment_count")
     private int commentCount = 0;     // 댓글 수
 
     @OneToMany(mappedBy = "feed", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 10)
-    private List<Like> likes; // 좋아요
+    private List<Like> likes = new ArrayList<>(); // 좋아요
 
     @Column(name = "like_count")
     private int likeCount = 0;     // 좋아요 수
