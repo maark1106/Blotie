@@ -50,7 +50,7 @@ public class Student extends BaseTimeEntity{
     private List<String> interestsEnglish;
 
     @Column(name = "is_korean", nullable = false)
-    private boolean isKorean;
+    private boolean korean;
 
     @Column(name = "profile_image")
     private String profileImage;
@@ -67,6 +67,9 @@ public class Student extends BaseTimeEntity{
     @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Like> likes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<MatchingRequest> matchings = new ArrayList<>();
+
     @Builder
     public Student(String name, String school, String major, String studentNumber, int grade, String mbti, List<String> language, List<String> interestsKorean, List<String> interestsEnglish, boolean isKorean, String profileImage) {
         this.name = name;
@@ -78,7 +81,7 @@ public class Student extends BaseTimeEntity{
         this.language = language;
         this.interestsKorean = interestsKorean;
         this.interestsEnglish = interestsEnglish;
-        this.isKorean = isKorean;
+        this.korean = isKorean;
         this.profileImage = profileImage;
     }
 }
