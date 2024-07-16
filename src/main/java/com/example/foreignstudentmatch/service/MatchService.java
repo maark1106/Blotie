@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -52,9 +53,10 @@ public class MatchService {
         Student koreanStudent = student.isKorean() ? student : matching.getStudent();
         Student foreignStudent = student.isKorean() ? matching.getStudent() : student;
 
-        return ChatRoom.builder()
+        Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByKoreanStudentAndForeignStudent(koreanStudent, foreignStudent);
+        return existingChatRoom.orElseGet(() -> ChatRoom.builder()
                 .koreanStudent(koreanStudent)
                 .foreignStudent(foreignStudent)
-                .build();
+                .build());
     }
 }

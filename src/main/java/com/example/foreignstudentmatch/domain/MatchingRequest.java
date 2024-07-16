@@ -19,6 +19,7 @@ public class MatchingRequest {
     @JoinColumn(name = "student_id")
     private Student student;
 
+    @Enumerated(EnumType.STRING)
     private Nationality nationality;
 
     @Builder

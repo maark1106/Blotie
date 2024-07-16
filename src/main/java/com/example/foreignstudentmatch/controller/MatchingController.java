@@ -16,7 +16,7 @@ public class MatchingController {
     private final MatchService matchService;
 
     @PostMapping("")
-    public String matchBuddy(@RequestParam("student_id") Long studentId){
-        return matchService.matchBuddy(studentId);
+    public ResponseDto<?> matchBuddy(@RequestParam("student_id") Long studentId){
+        return new ResponseDto<>(matchService.matchBuddy(studentId));
     }
 }
