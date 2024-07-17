@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class MatchService {
+public class MatchingService {
 
     private final StudentRepository studentRepository;
     private final MatchingRepository matchingRepository;
@@ -37,7 +37,7 @@ public class MatchService {
                     .nationality(student.isKorean() ? Nationality.KOREAN : Nationality.FOREIGNER)
                     .build();
             matchingRepository.save(newMatching);
-            return "매칭 결과가 없습니다.";
+            return "매칭이 요청되었습니다";
         } else { // 매칭할 사람이 있다면 채팅방(roomId) 생성 후 매칭 요청 삭제
             MatchingRequest matching = matchings.get(0);
 
