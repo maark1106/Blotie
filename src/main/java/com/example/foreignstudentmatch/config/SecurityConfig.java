@@ -19,6 +19,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth").permitAll()
                 .requestMatchers("/register").permitAll()
                 .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/ws/chat/**").permitAll()
                 .anyRequest().authenticated(); // 그 외의 모든 요청은 인증이 필요
 
         return http.build();
