@@ -1,5 +1,6 @@
 package com.example.foreignstudentmatch.domain;
 
+import com.example.foreignstudentmatch.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,11 +10,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "chat_room")
-public class ChatRoom {
+public class ChatRoom extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long chatRoomId;
+    private Long id;
 
     @OneToOne
     private Student koreanStudent;
