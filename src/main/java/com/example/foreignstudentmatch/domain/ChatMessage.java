@@ -1,5 +1,6 @@
 package com.example.foreignstudentmatch.domain;
 
+import com.example.foreignstudentmatch.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class ChatMessage {
+public class ChatMessage extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,5 +29,4 @@ public class ChatMessage {
     private Student student;
 
     private String message;
-    private LocalDateTime timestamp;
 }
