@@ -1,11 +1,9 @@
 package com.example.foreignstudentmatch.service;
 
-import com.example.foreignstudentmatch.domain.ChatRoom;
-import com.example.foreignstudentmatch.domain.MatchingRequest;
-import com.example.foreignstudentmatch.domain.Nationality;
-import com.example.foreignstudentmatch.domain.Student;
+import com.example.foreignstudentmatch.domain.*;
 import com.example.foreignstudentmatch.repository.ChatRoomRepository;
 import com.example.foreignstudentmatch.repository.MatchingRepository;
+import com.example.foreignstudentmatch.repository.StudentChatRoomRepository;
 import com.example.foreignstudentmatch.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +19,7 @@ public class MatchingService {
     private final StudentRepository studentRepository;
     private final MatchingRepository matchingRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final StudentChatRoomRepository studentChatRoomRepository;
 
     @Transactional
     public String matchBuddy(Long studentId) {
@@ -30,7 +29,6 @@ public class MatchingService {
 
         List<MatchingRequest> matchings = matchingRepository.findByNationality(nationality);
 
-        // 매칭할 사람이 없다면 MatchingRequest 생성 후 저장
         if (matchings.isEmpty()) {
             MatchingRequest newMatching = MatchingRequest.builder()
                     .student(student)
@@ -38,25 +36,26 @@ public class MatchingService {
                     .build();
             matchingRepository.save(newMatching);
             return "매칭이 요청되었습니다";
-        } else { // 매칭할 사람이 있다면 채팅방(roomId) 생성 후 매칭 요청 삭제
+        } else {
             MatchingRequest matching = matchings.get(0);
-
-            ChatRoom chatRoom = createChatRoom(student, matching);
+            ChatRoom chatRoom = createChatRoom(student, matching.getStudent());
+            if(chatRoom == null){
+                return "이미 존재하는 매칭입니다";
+            }
             chatRoomRepository.save(chatRoom);
-
+            studentChatRoomRepository.save(StudentChatRoom.builder().student(student).chatRoom(chatRoom).build());
+            studentChatRoomRepository.save(StudentChatRoom.builder().student(matching.getStudent()).chatRoom(chatRoom).build());
             matchingRepository.delete(matching);
             return "매칭되었습니다.";
         }
     }
 
-    private ChatRoom createChatRoom(Student student, MatchingRequest matching) {
-        Student koreanStudent = student.isKorean() ? student : matching.getStudent();
-        Student foreignStudent = student.isKorean() ? matching.getStudent() : student;
+    private ChatRoom createChatRoom(Student student1, Student student2) {
+        Optional<StudentChatRoom> chatRoomOptional = studentChatRoomRepository.findByStudents(student1, student2);
+        if (chatRoomOptional.isPresent()) {
+            return null;
+        }
 
-        Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByKoreanStudentAndForeignStudent(koreanStudent, foreignStudent);
-        return existingChatRoom.orElseGet(() -> ChatRoom.builder()
-                .koreanStudent(koreanStudent)
-                .foreignStudent(foreignStudent)
-                .build());
+        return new ChatRoom();
     }
 }

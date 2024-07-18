@@ -3,25 +3,28 @@ package com.example.foreignstudentmatch.service;
 import com.example.foreignstudentmatch.domain.ChatMessage;
 import com.example.foreignstudentmatch.domain.ChatRoom;
 import com.example.foreignstudentmatch.domain.Student;
+import com.example.foreignstudentmatch.domain.StudentChatRoom;
 import com.example.foreignstudentmatch.dto.chat.ChatDto;
+import com.example.foreignstudentmatch.dto.chat.ChatRoomResponseDto;
 import com.example.foreignstudentmatch.repository.ChatMessageRepository;
 import com.example.foreignstudentmatch.repository.ChatRoomRepository;
 import com.example.foreignstudentmatch.repository.StudentRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
-@Data
 @Service
+@RequiredArgsConstructor
 public class ChatService {
 
     private final ObjectMapper mapper;
@@ -50,19 +53,17 @@ public class ChatService {
         Student sender = studentRepository.findById(chatDto.getStudentId())
                 .orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
 
-        // 처음 들어왔을 때(ENTER) 이면 채팅방에 대한 사용자의 session을 추가
         if (chatDto.getType().equals(ChatDto.MessageType.ENTER)) {
             sessionsPerRoom.computeIfAbsent(chatRoom.getId(), k -> new HashSet<>()).add(session);
             chatDto.setMessage(sender.getName() + " 님이 입장하였습니다.");
             sendMessageToRoom(chatRoom.getId(), chatDto);
-        } // 메세지를 보내면(TALK) DB에 메세지 저장하고 해당 채팅방에 참여한 세션에게 메세지 보내기
-        else if (chatDto.getType().equals(ChatDto.MessageType.TALK)) {
+        } else if (chatDto.getType().equals(ChatDto.MessageType.TALK)) {
             saveMessage(chatDto);
-            System.out.println(chatDto.getMessage());
             sendMessageToRoom(chatRoom.getId(), chatDto);
         }
     }
 
+    @Transactional
     public void saveMessage(ChatDto chatDto) {
         Student sender = studentRepository.findById(chatDto.getStudentId())
                 .orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
@@ -74,7 +75,6 @@ public class ChatService {
                 .chatRoom(chatRoom)
                 .student(sender)
                 .message(chatDto.getMessage())
-                .timestamp(LocalDateTime.now())
                 .build();
         chatMessageRepository.save(chatMessage);
     }
@@ -88,5 +88,40 @@ public class ChatService {
 
     public void removeSession(WebSocketSession session) {
         sessionsPerRoom.values().forEach(sessions -> sessions.remove(session));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChatRoomResponseDto> readChatRooms(Long studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 학생입니다."));
+
+        List<ChatRoom> chatRooms = student.getStudentChatRooms().stream()
+                .map(StudentChatRoom::getChatRoom)
+                .collect(Collectors.toList());
+
+        List<ChatRoomResponseDto> responseDtos = chatRooms.stream().map(chatRoom -> {
+                    ChatMessage lastMessage = chatMessageRepository.findTopByChatRoomOrderByCreatedDateDesc(chatRoom);
+                    String lastMessageContent = lastMessage != null ? lastMessage.getMessage() : null;
+                    String lastMessageTime = lastMessage != null
+                            ? lastMessage.getCreatedDate()
+                            : chatRoom.getCreatedDate();
+
+                    Student buddy = chatRoom.getStudentChatRooms().stream()
+                            .map(StudentChatRoom::getStudent)
+                            .filter(s -> !s.getId().equals(student.getId()))
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalArgumentException("친구를 찾을 수 없습니다."));
+
+                    return ChatRoomResponseDto.builder()
+                            .chatRoomId(chatRoom.getId())
+                            .buddyName(buddy.getName())
+                            .buddyProfileImage(buddy.getProfileImage())
+                            .lastMessage(lastMessageContent)
+                            .lastMessageTime(lastMessageTime)
+                            .build();
+                }).sorted(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed())
+                .collect(Collectors.toList());
+
+        return responseDtos;
     }
 }
