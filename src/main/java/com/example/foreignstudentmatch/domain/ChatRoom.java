@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -16,15 +19,8 @@ public class ChatRoom extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    private Student koreanStudent;
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudentChatRoom> studentChatRooms = new ArrayList<>();
 
-    @OneToOne
-    private Student foreignStudent;
 
-    @Builder
-    public ChatRoom(Student koreanStudent, Student foreignStudent) {
-        this.koreanStudent = koreanStudent;
-        this.foreignStudent = foreignStudent;
-    }
 }

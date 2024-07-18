@@ -70,6 +70,9 @@ public class Student extends BaseTimeEntity{
     @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<MatchingRequest> matchings = new ArrayList<>();
 
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudentChatRoom> studentChatRooms = new ArrayList<>();
+
     @Builder
     public Student(String name, String school, String major, String studentNumber, int grade, String mbti, List<String> language, List<String> interestsKorean, List<String> interestsEnglish, boolean isKorean, String profileImage) {
         this.name = name;
