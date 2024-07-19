@@ -3,6 +3,8 @@ package com.example.foreignstudentmatch.dto.chat;
 import com.example.foreignstudentmatch.domain.ChatMessage;
 import lombok.Builder;
 
+import java.time.format.DateTimeFormatter;
+
 public record ChatMessageDto(
         String sender,
         String content,
@@ -20,7 +22,7 @@ public record ChatMessageDto(
         return ChatMessageDto.builder()
                 .sender(chatMessage.getStudent().getName())
                 .content(chatMessage.getMessage())
-                .createdDate(chatMessage.getCreatedDate())
+                .createdDate(chatMessage.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
                 .build();
     }
 }

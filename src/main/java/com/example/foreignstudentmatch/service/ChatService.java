@@ -22,6 +22,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,6 +81,7 @@ public class ChatService {
                 .chatRoom(chatRoom)
                 .student(sender)
                 .message(chatDto.getMessage())
+                .createdDate(LocalDateTime.now())
                 .build();
         chatMessageRepository.save(chatMessage);
     }
@@ -118,7 +121,7 @@ public class ChatService {
 
         ChatMessage lastMessage = chatMessageRepository.findTopByChatRoomOrderByCreatedDateDesc(chatRoom);
         String lastMessageContent = (lastMessage != null) ? lastMessage.getMessage() : null;
-        String lastMessageTime = (lastMessage != null) ? lastMessage.getCreatedDate() : chatRoom.getCreatedDate();
+        String lastMessageTime = (lastMessage != null) ? lastMessage.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")) : chatRoom.getCreatedDate();
 
         Student buddy = chatRoom.getStudentChatRooms().stream()
                 .map(StudentChatRoom::getStudent)
@@ -126,7 +129,6 @@ public class ChatService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("친구를 찾을 수 없습니다."));
 
-        // ChatRoomResponseDto 객체를 생성하여 반환
         return ChatRoomResponseDto.builder()
                 .chatRoomId(chatRoom.getId())
                 .buddyName(buddy.getName())
@@ -145,7 +147,7 @@ public class ChatService {
         List<StudentChatRoom> studentChatRooms = studentChatRoomRepository.findByChatRoomId(chatRoomId);
         Student buddy = studentChatRooms.stream()
                 .map(StudentChatRoom::getStudent)
-                .filter(s -> s.getId() != studentId)
+                .filter(s -> !s.getId().equals(studentId))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("친구를 찾을 수 없습니다"));
 
