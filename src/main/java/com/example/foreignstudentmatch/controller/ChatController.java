@@ -3,10 +3,7 @@ package com.example.foreignstudentmatch.controller;
 import com.example.foreignstudentmatch.dto.ResponseDto;
 import com.example.foreignstudentmatch.service.ChatService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -18,5 +15,10 @@ public class ChatController {
     @GetMapping
     public ResponseDto<?> readChatRooms(@RequestParam("student_id") Long studentId){
         return new ResponseDto<>(chatService.readChatRooms(studentId));
+    }
+
+    @GetMapping("/{chat_room_id}")
+    public ResponseDto<?> readChatMessages(@PathVariable("chat_room_id") Long chatRoomId, @RequestParam("student_id") Long studentId){
+        return new ResponseDto<>(chatService.readChatMessages(chatRoomId, studentId));
     }
 }

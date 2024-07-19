@@ -1,6 +1,7 @@
 package com.example.foreignstudentmatch.dto.chat;
 
 import lombok.Builder;
+import lombok.Getter;
 
 public record ChatRoomResponseDto(
         Long chatRoomId,

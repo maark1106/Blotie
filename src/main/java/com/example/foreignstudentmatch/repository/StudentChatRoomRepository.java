@@ -15,4 +15,6 @@ public interface StudentChatRoomRepository extends JpaRepository<StudentChatRoom
 
     @Query("SELECT scr FROM StudentChatRoom scr WHERE scr.student = :student1 AND scr.chatRoom IN (SELECT scr2.chatRoom FROM StudentChatRoom scr2 WHERE scr2.student = :student2)")
     Optional<StudentChatRoom> findByStudents(@Param("student1") Student student1, @Param("student2") Student student2);
+
+    List<StudentChatRoom> findByChatRoomId(Long chatRoomId);
 }
