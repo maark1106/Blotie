@@ -1,5 +1,6 @@
 package com.example.foreignstudentmatch.repository;
 
+import com.example.foreignstudentmatch.domain.ChatRoom;
 import com.example.foreignstudentmatch.domain.Student;
 import com.example.foreignstudentmatch.domain.StudentChatRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,8 @@ public interface StudentChatRoomRepository extends JpaRepository<StudentChatRoom
     Optional<StudentChatRoom> findByStudents(@Param("student1") Student student1, @Param("student2") Student student2);
 
     List<StudentChatRoom> findByChatRoomId(Long chatRoomId);
+
+    List<StudentChatRoom> findByChatRoomIn(List<ChatRoom> chatRooms);
+
+    List<StudentChatRoom> findByStudentId(Long studentId);
 }

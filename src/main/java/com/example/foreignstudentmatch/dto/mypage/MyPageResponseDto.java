@@ -11,9 +11,11 @@ public class MyPageResponseDto {
     private String name;
     private String major;
     private int grade;
+    private boolean korean;
     private String profileImage;
     private List<String> interestsKorean;
     private List<String> interestsEnglish;
     private List<String> language;
     private int buddyCount;
+    private List<Long> buddies;
 }
