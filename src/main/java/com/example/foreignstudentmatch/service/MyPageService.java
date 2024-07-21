@@ -27,20 +27,7 @@ public class MyPageService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
 
-        List<Long> buddies = getBuddies(studentId);
-
-        return MyPageResponseDto.builder()
-                .name(student.getName())
-                .major(student.getMajor())
-                .grade(student.getGrade())
-                .korean(student.isKorean())
-                .profileImage(student.getProfileImage())
-                .interestsKorean(student.getInterestsKorean())
-                .interestsEnglish(student.getInterestsEnglish())
-                .language(student.getLanguage())
-                .buddies(buddies)
-                .buddyCount(buddies.size())
-                .build();
+        return MyPageResponseDto.of(student, getBuddies(studentId));
     }
 
     private List<Long> getBuddies(Long studentId) {
