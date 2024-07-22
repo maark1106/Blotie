@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CommentService {
 
     private final CommentRepository commentRepository;
     private final FeedRepository feedRepository;
     private final StudentRepository studentRepository;
 
-    @Transactional
     public CommentSaveResponseDto saveComment(Long feedId, CommentSaveRequestDto commentSaveRequestDto) {
         Feed feed = feedRepository.findById(feedId).orElseThrow(() -> new IllegalArgumentException("피드를 찾을 수 없습니다."));
         Student student = studentRepository.findById(commentSaveRequestDto.getStudentId()).orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));

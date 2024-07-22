@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FeedService {
 
     private final S3UploadService s3UploadService;
@@ -30,7 +31,6 @@ public class FeedService {
     private final UploadImageRepository uploadImageRepository;
     private final LikeRepository likeRepository;
 
-    @Transactional
     public FeedSaveResponseDto saveFeed(Long studentId, String title, String content, List<MultipartFile> images) throws IOException {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
@@ -67,7 +67,7 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public FeedListResponseDto getFeeds(int page, Long studentId) {
-        int pageSize = 4; // 페이지당 게시글 수
+        int pageSize = 40; // 페이지당 게시글 수
         Pageable pageable = PageRequest.of(page - 1, pageSize);
         Page<Feed> feedPage = feedRepository.findAllByOrderByCreatedDateDesc(pageable);
 
@@ -89,7 +89,7 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public FeedListResponseDto getFeedsByLikes(int page, Long studentId) {
-        int pageSize = 4; // 페이지당 게시글 수
+        int pageSize = 40; // 페이지당 게시글 수
         Pageable pageable = PageRequest.of(page - 1, pageSize);
         Page<Feed> feedPage = feedRepository.findAllByOrderByLikeCountDesc(pageable);
 
@@ -111,7 +111,7 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public FeedListResponseDto getFeedsByStudent(int page, Long studentId) {
-        int pageSize = 4; // 페이지당 게시글 수
+        int pageSize = 40; // 페이지당 게시글 수
         Pageable pageable = PageRequest.of(page - 1, pageSize);
         Page<Feed> feedPage = feedRepository.findAllByStudentIdOrderByCreatedDateDesc(studentId, pageable);
 
@@ -161,19 +161,18 @@ public class FeedService {
                 .content(feed.getContent())
                 .images(images)
                 .isLike(isLike)
+                .likeCount(feed.getLikeCount())
                 .commentsCount(feed.getCommentCount())
                 .comments(comments)
                 .build();
     }
 
-    @Transactional
     public void deleteFeed(Long feedId) {
         Feed deletedFeed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
         feedRepository.delete(deletedFeed);
     }
 
-    @Transactional
     public SingleFeedResponseDto updateFeed(Long feedId, Long studentId, FeedUpdateRequestDto requestDto) {
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
