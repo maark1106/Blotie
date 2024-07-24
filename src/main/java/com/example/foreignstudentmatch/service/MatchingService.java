@@ -44,7 +44,7 @@ public class MatchingService {
         } else {
             MatchingRequest matching = matchings.get(0);
             ChatRoom chatRoom = createChatRoom(student, matching.getStudent());
-            if(chatRoom == null){
+            if (chatRoom == null) {
                 return "이미 존재하는 매칭입니다";
             }
             chatRoomRepository.save(chatRoom);
@@ -70,5 +70,19 @@ public class MatchingService {
         }
 
         return new ChatRoom();
+    }
+
+    @Transactional
+    public String matchCancel(Long studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("찾는 학생이 없습니다"));
+
+        MatchingRequest matchingRequest = matchingRepository.findByStudent(student)
+                .orElseThrow(() -> new IllegalArgumentException("보낸 매칭이 존재하지 않습니다"));
+
+        matchingRepository.delete(matchingRequest);
+
+        student.updateMatchStatus(MatchingStatus.AVAILABLE);
+        return "매칭 신청이 취소되었습니다";
     }
 }

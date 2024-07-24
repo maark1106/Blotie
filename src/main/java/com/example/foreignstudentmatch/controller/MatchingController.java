@@ -3,10 +3,7 @@ package com.example.foreignstudentmatch.controller;
 import com.example.foreignstudentmatch.dto.ResponseDto;
 import com.example.foreignstudentmatch.service.MatchingService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,5 +15,10 @@ public class MatchingController {
     @PostMapping("")
     public ResponseDto<?> matchBuddy(@RequestParam("student_id") Long studentId){
         return new ResponseDto<>("200", matchingService.matchBuddy(studentId), null);
+    }
+
+    @DeleteMapping("")
+    public ResponseDto<?> matchCancel(@RequestParam("student_id") Long studentId){
+        return new ResponseDto<>("200", matchingService.matchCancel(studentId), null);
     }
 }
