@@ -1,6 +1,8 @@
 package com.example.foreignstudentmatch.service;
 
 import com.example.foreignstudentmatch.domain.*;
+import com.example.foreignstudentmatch.domain.enums.MatchingStatus;
+import com.example.foreignstudentmatch.domain.enums.Nationality;
 import com.example.foreignstudentmatch.repository.ChatRoomRepository;
 import com.example.foreignstudentmatch.repository.MatchingRepository;
 import com.example.foreignstudentmatch.repository.StudentChatRoomRepository;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +38,8 @@ public class MatchingService {
                     .nationality(student.isKorean() ? Nationality.KOREAN : Nationality.FOREIGNER)
                     .build();
             matchingRepository.save(newMatching);
+            student.updateMatchStatus(MatchingStatus.PENDING);
+            studentRepository.save(student);
             return "매칭이 요청되었습니다";
         } else {
             MatchingRequest matching = matchings.get(0);
@@ -46,6 +51,14 @@ public class MatchingService {
             studentChatRoomRepository.save(StudentChatRoom.builder().student(student).chatRoom(chatRoom).build());
             studentChatRoomRepository.save(StudentChatRoom.builder().student(matching.getStudent()).chatRoom(chatRoom).build());
             matchingRepository.delete(matching);
+
+            student.updateMatchStatus(MatchingStatus.MATCHED);
+            studentRepository.save(student);
+
+            Student buddy = matching.getStudent();
+            buddy.updateMatchStatus(MatchingStatus.MATCHED);
+            studentRepository.save(buddy);
+
             return "매칭되었습니다.";
         }
     }

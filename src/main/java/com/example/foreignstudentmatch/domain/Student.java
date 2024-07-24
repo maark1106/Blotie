@@ -1,12 +1,15 @@
 package com.example.foreignstudentmatch.domain;
 
 import com.example.foreignstudentmatch.common.BaseTimeEntity;
+import com.example.foreignstudentmatch.domain.enums.MatchingStatus;
 import com.example.foreignstudentmatch.util.ListToStringConverter;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +58,14 @@ public class Student extends BaseTimeEntity{
     @Column(name = "profile_image")
     private String profileImage;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "matching_status")
+    @ColumnDefault("'AVAILABLE'")
+    private MatchingStatus matchingStatus;
+
+    @Column(name = "matched_at")
+    private LocalDateTime matchedAt = LocalDateTime.now();
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<RefreshToken> refreshTokens;
 
@@ -86,5 +97,12 @@ public class Student extends BaseTimeEntity{
         this.interestsEnglish = interestsEnglish;
         this.korean = isKorean;
         this.profileImage = profileImage;
+    }
+
+    public void updateMatchStatus(MatchingStatus matchingStatus) {
+        this.matchingStatus = matchingStatus;
+        if(matchingStatus == MatchingStatus.MATCHED){
+            matchedAt = LocalDateTime.now();
+        }
     }
 }

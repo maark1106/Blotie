@@ -21,4 +21,9 @@ public class ChatController {
     public ResponseDto<?> readChatMessages(@PathVariable("chat_room_id") Long chatRoomId, @RequestParam("student_id") Long studentId){
         return new ResponseDto<>(chatService.readChatMessages(chatRoomId, studentId));
     }
+
+    @DeleteMapping("/{chat_room_id}")
+    public ResponseDto<?> exitChatRoom(@PathVariable("chat_room_id") Long chatRoomId, @RequestParam("student_id") Long studentId){
+        return new ResponseDto<>(chatService.exitChatRoom(chatRoomId, studentId));
+    }
 }

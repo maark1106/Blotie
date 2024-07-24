@@ -69,7 +69,6 @@ public class ChatService {
         }
     }
 
-    @Transactional
     public void saveMessage(ChatDto chatDto) {
         Student sender = studentRepository.findById(chatDto.getStudentId())
                 .orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
@@ -116,7 +115,6 @@ public class ChatService {
         return responseDtos;
     }
 
-    // ChatRoom을 ChatRoomResponseDto로 변환하는 헬퍼 메서드
     private ChatRoomResponseDto createChatRoomResponseDto(ChatRoom chatRoom, Student student) {
 
         ChatMessage lastMessage = chatMessageRepository.findTopByChatRoomOrderByCreatedDateDesc(chatRoom);
@@ -138,6 +136,7 @@ public class ChatService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public ChatMessageResponseDto readChatMessages(Long chatRoomId, Long studentId) {
         List<ChatMessage> chatMessages = chatMessageRepository.findByChatRoomIdOrderByCreatedDateAsc(chatRoomId);
         List<ChatMessageDto> chatMessageDtos = chatMessages.stream()
@@ -158,5 +157,13 @@ public class ChatService {
                 .buddyName(buddy.getName())
                 .messages(chatMessageDtos)
                 .build();
+    }
+
+    public String exitChatRoom(Long chatRoomId, Long studentId) {
+        StudentChatRoom studentChatRoom = studentChatRoomRepository.findByStudentIdAndChatRoomId(studentId, chatRoomId)
+                .orElseThrow(() -> new IllegalArgumentException("채팅방에서 학생을 찾을 수 없습니다."));
+
+        studentChatRoomRepository.delete(studentChatRoom);
+        return "채팅방에서 나갔습니다.";
     }
 }

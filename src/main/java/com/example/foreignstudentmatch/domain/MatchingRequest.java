@@ -1,5 +1,6 @@
 package com.example.foreignstudentmatch.domain;
 
+import com.example.foreignstudentmatch.domain.enums.Nationality;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

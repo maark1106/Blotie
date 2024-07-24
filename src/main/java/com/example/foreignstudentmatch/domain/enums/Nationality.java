@@ -1,4 +1,4 @@
-package com.example.foreignstudentmatch.domain;
+package com.example.foreignstudentmatch.domain.enums;
 
 public enum Nationality {
     KOREAN,

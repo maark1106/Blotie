@@ -18,5 +18,6 @@ public class SingleFeedResponseDto {
     private List<String> images;
     private boolean isLike;
     private int commentsCount;
+    private int likeCount;
     private List<FeedCommentResponseDto> comments;
 }
