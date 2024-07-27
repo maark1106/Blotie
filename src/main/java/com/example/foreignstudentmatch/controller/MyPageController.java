@@ -1,5 +1,6 @@
 package com.example.foreignstudentmatch.controller;
 
+import com.example.foreignstudentmatch.annotation.StudentId;
 import com.example.foreignstudentmatch.dto.ResponseDto;
 import com.example.foreignstudentmatch.service.MyPageService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class MyPageController {
     private final MyPageService MyPageService;
 
     @GetMapping
-    public ResponseDto<?> getStudentMyPage(@RequestParam("student_id") Long studentId) {
+    public ResponseDto<?> getStudentMyPage(@StudentId Long studentId) {
         return new ResponseDto<>(MyPageService.getStudentMyPage(studentId));
     }
 }

@@ -26,8 +26,8 @@ public class AuthController {
         return new ResponseDto<>(authService.auth(loginRequestDto));
     }
 
-    @PostMapping("/register")
-    public ResponseDto<?> register(@RequestBody RegisterRequestDto registerRequestDto) {
+    @PostMapping("/login")
+    public ResponseDto<?> login(@RequestBody RegisterRequestDto registerRequestDto) {
         return new ResponseDto<>(authService.register(registerRequestDto));
     }
 }

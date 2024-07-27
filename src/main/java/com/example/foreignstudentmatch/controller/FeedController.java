@@ -1,5 +1,6 @@
 package com.example.foreignstudentmatch.controller;
 
+import com.example.foreignstudentmatch.annotation.StudentId;
 import com.example.foreignstudentmatch.dto.ResponseDto;
 import com.example.foreignstudentmatch.dto.auth.RegisterResponseDto;
 import com.example.foreignstudentmatch.dto.feed.FeedUpdateRequestDto;
@@ -18,50 +19,50 @@ public class FeedController {
 
     private final FeedService feedService;
 
-    @PostMapping("/save")
+    @PostMapping
     public ResponseDto<?> saveFeed(
-            @RequestParam("studentId") Long studentId,
+            @StudentId Long studentId,
             @RequestParam("title") String title,
             @RequestParam("content") String content,
-            @RequestParam("images") List<MultipartFile> images
+            @RequestParam(value = "images", required = false) List<MultipartFile> images
     ) throws IOException {
         return new ResponseDto<>(feedService.saveFeed(studentId, title, content, images));
     }
 
     @GetMapping
     public ResponseDto<?> getFeeds(@RequestParam(value = "page", defaultValue = "1") int page,
-                                   @RequestParam("student_id") Long studentId) {
+                                   @StudentId Long studentId) {
         return new ResponseDto<>(feedService.getFeeds(page, studentId));
     }
 
     @GetMapping("/likes")
     public ResponseDto<?> getFeedsByLikes(@RequestParam(value = "page", defaultValue = "1") int page,
-                                          @RequestParam("student_id") Long studentId) {
+                                          @StudentId Long studentId) {
         return new ResponseDto<>(feedService.getFeedsByLikes(page, studentId));
     }
 
     @GetMapping("/student")
     public ResponseDto<?> getFeedsByStudent(@RequestParam(value = "page", defaultValue = "1") int page,
-                                            @RequestParam("student_id") Long studentId) {
+                                            @StudentId Long studentId) {
         return new ResponseDto<>(feedService.getFeedsByStudent(page, studentId));
     }
 
     @GetMapping("/{feed_id}")
     public ResponseDto<?> getFeed(@PathVariable("feed_id") Long feedId,
-                                  @RequestParam("student_id") Long studentId) {
+                                  @StudentId Long studentId) {
         return new ResponseDto<>(feedService.getFeed(feedId, studentId));
     }
 
     @PatchMapping("/{feed_id}")
     public ResponseDto<?> updateFeed(@PathVariable("feed_id") Long feedId,
-                                     @RequestParam("student_id") Long studentId,
+                                     @StudentId Long studentId,
                                      @RequestBody FeedUpdateRequestDto requestDto) {
         return new ResponseDto<>(feedService.updateFeed(feedId, studentId, requestDto));
     }
 
     @DeleteMapping("/{feed_id}")
-    public ResponseDto<?> deleteFeed(@PathVariable("feed_id") Long feedId) {
-        feedService.deleteFeed(feedId);
+    public ResponseDto<?> deleteFeed(@PathVariable("feed_id") Long feedId, @StudentId Long studentId) {
+        feedService.deleteFeed(feedId, studentId);
         return new ResponseDto<>("200", "피드가 삭제되었습니다", null);
     }
 

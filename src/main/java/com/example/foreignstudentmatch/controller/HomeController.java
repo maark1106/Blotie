@@ -1,5 +1,6 @@
 package com.example.foreignstudentmatch.controller;
 
+import com.example.foreignstudentmatch.annotation.StudentId;
 import com.example.foreignstudentmatch.dto.ResponseDto;
 import com.example.foreignstudentmatch.service.HomeService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class HomeController {
     private final HomeService homeService;
 
     @GetMapping
-    public ResponseDto<?> getHome(@RequestParam("student_id") Long studentId) {
+    public ResponseDto<?> getHome(@StudentId Long studentId) {
         return new ResponseDto<>(homeService.getMatchingStatus(studentId));
     }
 }

@@ -1,5 +1,6 @@
 package com.example.foreignstudentmatch.controller;
 
+import com.example.foreignstudentmatch.annotation.StudentId;
 import com.example.foreignstudentmatch.dto.ResponseDto;
 import com.example.foreignstudentmatch.service.MatchingService;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +14,12 @@ public class MatchingController {
     private final MatchingService matchingService;
 
     @PostMapping("")
-    public ResponseDto<?> matchBuddy(@RequestParam("student_id") Long studentId){
+    public ResponseDto<?> matchBuddy(@StudentId Long studentId){
         return new ResponseDto<>("200", matchingService.matchBuddy(studentId), null);
     }
 
     @DeleteMapping("")
-    public ResponseDto<?> matchCancel(@RequestParam("student_id") Long studentId){
+    public ResponseDto<?> matchCancel(@StudentId Long studentId){
         return new ResponseDto<>("200", matchingService.matchCancel(studentId), null);
     }
 }
