@@ -60,14 +60,13 @@ public class Student extends BaseTimeEntity{
 
     @Enumerated(EnumType.STRING)
     @Column(name = "matching_status")
-    @ColumnDefault("'AVAILABLE'")
     private MatchingStatus matchingStatus;
 
     @Column(name = "matched_at")
     private LocalDateTime matchedAt = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<RefreshToken> refreshTokens;
+    @OneToOne(mappedBy = "student", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private RefreshToken refreshToken;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Feed> feeds = new ArrayList<>();
@@ -85,7 +84,7 @@ public class Student extends BaseTimeEntity{
     private List<StudentChatRoom> studentChatRooms = new ArrayList<>();
 
     @Builder
-    public Student(String name, String school, String major, String studentNumber, int grade, String mbti, List<String> language, List<String> interestsKorean, List<String> interestsEnglish, boolean isKorean, String profileImage) {
+    public Student(String name, String school, String major, String studentNumber, int grade, String mbti, List<String> language, List<String> interestsKorean, List<String> interestsEnglish, boolean isKorean, String profileImage, MatchingStatus matchingStatus) {
         this.name = name;
         this.school = school;
         this.major = major;
@@ -97,6 +96,7 @@ public class Student extends BaseTimeEntity{
         this.interestsEnglish = interestsEnglish;
         this.korean = isKorean;
         this.profileImage = profileImage;
+        this.matchingStatus = matchingStatus;
     }
 
     public void updateMatchStatus(MatchingStatus matchingStatus) {
