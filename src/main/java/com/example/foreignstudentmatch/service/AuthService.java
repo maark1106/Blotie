@@ -2,13 +2,14 @@ package com.example.foreignstudentmatch.service;
 
 import com.example.foreignstudentmatch.domain.RefreshToken;
 import com.example.foreignstudentmatch.domain.Student;
+import com.example.foreignstudentmatch.domain.enums.MatchingStatus;
 import com.example.foreignstudentmatch.dto.auth.AuthRequestDto;
 import com.example.foreignstudentmatch.dto.auth.AuthResponseDto;
 import com.example.foreignstudentmatch.dto.auth.RegisterRequestDto;
 import com.example.foreignstudentmatch.dto.auth.RegisterResponseDto;
 import com.example.foreignstudentmatch.repository.RefreshTokenRepository;
 import com.example.foreignstudentmatch.repository.StudentRepository;
-import com.example.foreignstudentmatch.util.JwtTokenUtil;
+import com.example.foreignstudentmatch.security.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
@@ -20,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -80,7 +80,7 @@ public class AuthService {
                     Student student = optionalStudent.get();
 
                     // AccessToken 생성
-                    String accessToken = JwtTokenUtil.createToken(student.getStudentNumber(), secretKey, accessTokenExpiry);
+                    String accessToken = JwtTokenUtil.createToken(student.getId(), secretKey, accessTokenExpiry);
 
                     // 기존에 발급된 RefreshToken이 있는지 확인
                     Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByStudent(student);
@@ -92,7 +92,7 @@ public class AuthService {
                         refreshToken = existingRefreshToken.getToken();
                     } else {
                         // 기존 RefreshToken이 없다면, 새로 생성
-                        refreshToken = JwtTokenUtil.createRefreshToken(student.getStudentNumber(), secretKey, refreshTokenExpiry);
+                        refreshToken = JwtTokenUtil.createRefreshToken(student.getId(), secretKey, refreshTokenExpiry);
                         RefreshToken refreshTokenEntity = RefreshToken
                                 .builder()
                                 .student(student)
@@ -142,14 +142,15 @@ public class AuthService {
                 .interestsEnglish(registerRequestDto.getInterestsEnglish())
                 .isKorean(registerRequestDto.isKorean())
                 .profileImage(profileImage)
+                .matchingStatus(MatchingStatus.AVAILABLE)
                 .build();
 
         // DB에 저장
         studentRepository.save(student);
 
         // AccessToken과 RefreshToken 생성
-        String accessToken = JwtTokenUtil.createToken(student.getStudentNumber(), secretKey, accessTokenExpiry);
-        String refreshToken = JwtTokenUtil.createRefreshToken(student.getStudentNumber(), secretKey, refreshTokenExpiry);
+        String accessToken = JwtTokenUtil.createToken(student.getId(), secretKey, accessTokenExpiry);
+        String refreshToken = JwtTokenUtil.createRefreshToken(student.getId(), secretKey, refreshTokenExpiry);
 
         // RefreshToken을 DB에 저장
         RefreshToken refreshTokenEntity = RefreshToken.builder()
