@@ -1,5 +1,7 @@
 package com.example.foreignstudentmatch.security;
 
+import com.example.foreignstudentmatch.domain.RefreshToken;
+import com.example.foreignstudentmatch.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -7,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,12 +18,15 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final CustomUserDetailService userDetailService;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final String secretKey = "my-secret-key-123123";
+    private final long accessTokenExpiry = 1000 * 60 * 60; // 60분
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -36,17 +42,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 studentId = claims.getSubject();
                 request.setAttribute("STUDENT_ID", Long.valueOf(studentId));
             } catch (ExpiredJwtException e) {
-                // 액세스 토큰이 만료된 경우 리프레시 토큰을 사용하여 새로운 액세스 토큰을 발급
-                String refreshToken = request.getHeader("RefreshToken");
-                if (refreshToken != null && !JwtTokenUtil.isExpired(refreshToken, secretKey)) {
-                    Claims refreshClaims = JwtTokenUtil.extractClaims(refreshToken, secretKey);
-                    studentId = refreshClaims.getSubject();
-                    Long newStudentId = Long.valueOf(refreshClaims.get("studentId").toString());
-                    String newAccessToken = JwtTokenUtil.createToken(newStudentId, secretKey, 1000 * 60 * 30); // 30분
-                    response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + newAccessToken);
-                    request.setAttribute("STUDENT_ID", newStudentId);
+                Claims claims = e.getClaims();
+                studentId = claims.getSubject();
+
+                if (studentId != null) {
+                    Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByStudentId(Long.valueOf(studentId));
+                    if (refreshTokenOptional.isPresent()) {
+                        RefreshToken refreshToken = refreshTokenOptional.get();
+                        if (JwtTokenUtil.validateToken(refreshToken.getToken(), userDetailService.loadUserByUsername(studentId), secretKey)) {
+                            String newAccessToken = JwtTokenUtil.createToken(Long.valueOf(studentId), secretKey, accessTokenExpiry); // 30분
+                            response.setHeader(HttpHeaders.AUTHORIZATION, newAccessToken);
+                            request.setAttribute("STUDENT_ID", Long.valueOf(studentId));
+                        } else {
+                            response.sendRedirect("/auth");
+                            return;
+                        }
+                    } else {
+                        response.sendRedirect("/auth");
+                        return;
+                    }
                 } else {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "로그인이 필요합니다.");
+                    response.sendRedirect("/auth");
                     return;
                 }
             } catch (Exception e) {
@@ -56,10 +72,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (studentId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailService.loadUserByUsername(studentId);
-            if (JwtTokenUtil.validateToken(jwt, userDetails, secretKey)) {
+            CustomUserDetail userDetail = userDetailService.loadUserByUsername(studentId);
+            if (JwtTokenUtil.validateToken(jwt, userDetail, secretKey)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
+                        userDetail, null, userDetail.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

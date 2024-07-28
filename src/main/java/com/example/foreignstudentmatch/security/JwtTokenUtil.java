@@ -1,9 +1,9 @@
 package com.example.foreignstudentmatch.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
 
@@ -37,23 +37,43 @@ public class JwtTokenUtil {
 
     // Claims에서 studentId 꺼내기
     public static Long getStudentId(String token, String secretKey) {
-        return Long.valueOf(extractClaims(token, secretKey).get("studentId").toString());
+        try {
+            return Long.valueOf(extractClaims(token, secretKey).get("studentId").toString());
+        } catch (ExpiredJwtException e) {
+            return Long.valueOf(e.getClaims().get("studentId").toString());
+        }
     }
 
     // 발급된 Token이 만료 시간이 지났는지 체크
     public static boolean isExpired(String token, String secretKey) {
-        Date expiredDate = extractClaims(token, secretKey).getExpiration();
-        return expiredDate.before(new Date());
+        try {
+            Date expiredDate = extractClaims(token, secretKey).getExpiration();
+            return expiredDate.before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
     }
 
     // SecretKey를 사용해 Token Parsing
     public static Claims extractClaims(String token, String secretKey) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(removeBearerPrefix(token)).getBody();
     }
 
     // Token 유효성 검사
-    public static boolean validateToken(String token, UserDetails userDetails, String secretKey) {
-        Long studentId = getStudentId(token, secretKey);
-        return (studentId.equals(Long.valueOf(userDetails.getUsername())) && !isExpired(token, secretKey));
+    public static boolean validateToken(String token, CustomUserDetail userDetail, String secretKey) {
+        try {
+            Long studentId = getStudentId(token, secretKey);
+            return (studentId.equals(Long.valueOf(userDetail.getUsername())) && !isExpired(token, secretKey));
+        } catch (ExpiredJwtException e) {
+            return false;
+        }
+    }
+
+    // Bearer 접두사 제거
+    private static String removeBearerPrefix(String token) {
+        if (token.startsWith("Bearer ")) {
+            return token.substring(7);
+        }
+        return token;
     }
 }
