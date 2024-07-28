@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentSaveRequestDto {
-    private Long studentId;
     private String content;
 }

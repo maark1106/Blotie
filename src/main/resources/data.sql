@@ -1,31 +1,31 @@
 -- 학생 데이터 삽입
-INSERT INTO student (name, school, major, student_number, grade, mbti, language, interests_korean, interests_english, is_korean, profile_image, create_date, modified_date)
+INSERT INTO student (name, school, major, student_number, grade, mbti, language, interests_korean, interests_english, is_korean, profile_image, create_date, modified_date, matched_at)
 VALUES
-    ('John Doe', '세종대학교', '컴퓨터공학과', '20201234', 3, 'INTJ', '["English", "Korean"]', '["축구", "등산"]', '["Football", "Hiking"]', false, 'https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%ED%94%84%EB%A1%9C%ED%95%841.png', '2024/07/08 14:00:00', '2024/07/08 14:00:00');
+    ('John Doe', '세종대학교', '컴퓨터공학과', '20201234', 3, 'INTJ', '["English", "Korean"]', '["축구", "등산"]', '["Football", "Hiking"]', false, 'https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%ED%94%84%EB%A1%9C%ED%95%841.png', '2024/07/08 14:00:00', '2024/07/08 14:00:00', '2024/07/05 14:00:00');
 
 SET @student_id_1 = LAST_INSERT_ID();
 
-INSERT INTO student (name, school, major, student_number, grade, mbti, language, interests_korean, interests_english, is_korean, profile_image, create_date, modified_date)
+INSERT INTO student (name, school, major, student_number, grade, mbti, language, interests_korean, interests_english, is_korean, profile_image, create_date, modified_date, matched_at)
 VALUES
-    ('Jane Smith', '세종대학교', '경제학과', '20201234', 2, 'ENFP', '["English", "Japanese"]', '["요리", "음악"]', '["Cooking", "Music"]', false, 'https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%ED%94%84%EB%A1%9C%ED%95%842.png', '2024/07/08 14:00:00', '2024/07/08 14:00:00');
+    ('Jane Smith', '세종대학교', '경제학과', '20201235', 2, 'ENFP', '["English", "Japanese"]', '["요리", "음악"]', '["Cooking", "Music"]', false, 'https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%ED%94%84%EB%A1%9C%ED%95%842.png', '2024/07/08 14:00:00', '2024/07/08 14:00:00', '2024/07/06 14:00:00');
 
 SET @student_id_2 = LAST_INSERT_ID();
 
-INSERT INTO student (name, school, major, student_number, grade, mbti, language, interests_korean, interests_english, is_korean, profile_image, create_date, modified_date)
+INSERT INTO student (name, school, major, student_number, grade, mbti, language, interests_korean, interests_english, is_korean, profile_image, create_date, modified_date, matched_at)
 VALUES
-    ('한명수', '세종대학교', '컴퓨터공학과', '20011591', 4, 'ISTP', '["Korean", "English"]', '["게임", "독서"]', '["Gaming", "Reading"]', true, 'https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%ED%94%84%EB%A1%9C%ED%95%843.png', '2024/07/08 14:00:00', '2024/07/08 14:00:00');
+    ('한명수', '세종대학교', '컴퓨터공학과', '20011591', 4, 'ISTP', '["Korean", "English"]', '["게임", "독서"]', '["Gaming", "Reading"]', true, 'https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%ED%94%84%EB%A1%9C%ED%95%843.png', '2024/07/08 14:00:00', '2024/07/08 14:00:00', '2024/07/07 14:00:00');
 
 SET @student_id_3 = LAST_INSERT_ID();
 
-INSERT INTO student (name, school, major, student_number, grade, mbti, language, interests_korean, interests_english, is_korean, profile_image, create_date, modified_date)
+INSERT INTO student (name, school, major, student_number, grade, mbti, language, interests_korean, interests_english, is_korean, profile_image, create_date, modified_date, matched_at)
 VALUES
-    ('김민지', '세종대학교', '데이터사이언스학과', '20201234', 1, 'INFJ', '["Korean", "English"]', '["영화", "음악"]', '["Movies", "Music"]', true, 'https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%ED%94%84%EB%A1%9C%ED%95%844.png', '2024/07/08 14:00:00', '2024/07/08 14:00:00');
+    ('김민지', '세종대학교', '데이터사이언스학과', '20201236', 1, 'INFJ', '["Korean", "English"]', '["영화", "음악"]', '["Movies", "Music"]', true, 'https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%ED%94%84%EB%A1%9C%ED%95%844.png', '2024/07/08 14:00:00', '2024/07/08 14:00:00', '2024/07/08 14:00:00');
 
 SET @student_id_4 = LAST_INSERT_ID();
 
-INSERT INTO student (name, school, major, student_number, grade, mbti, language, interests_korean, interests_english, is_korean, profile_image, create_date, modified_date)
+INSERT INTO student (name, school, major, student_number, grade, mbti, language, interests_korean, interests_english, is_korean, profile_image, create_date, modified_date, matched_at)
 VALUES
-    ('이하나', '세종대학교', '데이터사이언스학과', '20201234', 3, 'ENTJ', '["Korean", "Chinese"]', '["수영", "여행"]', '["Swimming", "Traveling"]', true, 'https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%ED%94%84%EB%A1%9C%ED%95%845.png', '2024/07/08 14:00:00', '2024/07/08 14:00:00');
+    ('이하나', '세종대학교', '데이터사이언스학과', '20201237', 3, 'ENTJ', '["Korean", "Chinese"]', '["수영", "여행"]', '["Swimming", "Traveling"]', true, 'https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%ED%94%84%EB%A1%9C%ED%95%845.png', '2024/07/08 14:00:00', '2024/07/08 14:00:00', '2024/07/09 14:00:00');
 
 SET @student_id_5 = LAST_INSERT_ID();
 
@@ -64,11 +64,11 @@ SET @feed_id_5 = LAST_INSERT_ID();
 -- 댓글 데이터 삽입
 INSERT INTO comment (content, student_id, feed_id, comment_number, create_date, modified_date)
 VALUES
-    ('I\'m really looking forward to the mentoring program!', @student_id_1, @feed_id_1, 1, '2024/07/08 14:00:00', '2024/07/08 14:00:00'),
+    ('Im really looking forward to the mentoring program!', @student_id_1, @feed_id_1, 1, '2024/07/08 14:00:00', '2024/07/08 14:00:00'),
 ('이번 학기에 꼭 참여하고 싶습니다! 좋은 기회 제공해주셔서 감사합니다.', @student_id_2, @feed_id_1, 2, '2024/07/08 14:00:00', '2024/07/08 14:00:00'),
 ('창업에 대한 열정을 가지고 있는데, 꼭 지원하고 싶어요! 😊', @student_id_3, @feed_id_1, 1, '2024/07/08 14:00:00', '2024/07/08 14:00:00'),
 ('This is a comment on the third feed.', @student_id_1, @feed_id_3, 1, '2024/07/08 14:00:00', '2024/07/08 14:00:00'),
-('It\'s great that international students can also apply. I want to learn in a global environment!', @student_id_5, @feed_id_2, 1, '2024/07/08 14:00:00', '2024/07/08 14:00:00');
+('Its great that international students can also apply. I want to learn in a global environment!', @student_id_5, @feed_id_2, 1, '2024/07/08 14:00:00', '2024/07/08 14:00:00');
 
 -- 좋아요 데이터 삽입
 INSERT INTO user_like (student_id, feed_id)

@@ -167,9 +167,14 @@ public class FeedService {
                 .build();
     }
 
-    public void deleteFeed(Long feedId) {
+    public void deleteFeed(Long feedId, Long studentId) {
         Feed deletedFeed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+
+        if (!deletedFeed.getStudent().getId().equals(studentId)) {
+            throw new IllegalArgumentException("삭제 권한이 없습니다.");
+        }
+
         feedRepository.delete(deletedFeed);
     }
 

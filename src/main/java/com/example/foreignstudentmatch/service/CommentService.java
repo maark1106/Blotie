@@ -24,9 +24,9 @@ public class CommentService {
     private final FeedRepository feedRepository;
     private final StudentRepository studentRepository;
 
-    public CommentSaveResponseDto saveComment(Long feedId, CommentSaveRequestDto commentSaveRequestDto) {
+    public CommentSaveResponseDto saveComment(Long feedId, CommentSaveRequestDto commentSaveRequestDto, Long studentId) {
         Feed feed = feedRepository.findById(feedId).orElseThrow(() -> new IllegalArgumentException("피드를 찾을 수 없습니다."));
-        Student student = studentRepository.findById(commentSaveRequestDto.getStudentId()).orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
 
         int commentNumber = getOrCreateCommentNumber(feed, student);
 

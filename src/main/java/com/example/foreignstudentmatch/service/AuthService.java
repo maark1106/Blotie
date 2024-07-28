@@ -27,18 +27,16 @@ import java.util.Random;
 import static com.example.foreignstudentmatch.util.ProfileImagesUrl.profileImages;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class AuthService {
 
     private final StudentRepository studentRepository;
-    private final RefreshTokenRepository refreshTokenRepository; // RefreshTokenRepository 추가 필요
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private final String secretKey = "my-secret-key-123123"; // 실제 환경에서는 더 안전하게 관리
-    private final long accessTokenExpiry = 1000 * 60 * 30; // 30분
-    private final long refreshTokenExpiry = 1000 * 60 * 60 * 24 * 7; // 7일
-
+    private final long accessTokenExpiry = 1000L * 60 * 60 * 24 * 365 * 100;
+    private final long refreshTokenExpiry = 1000L * 60 * 60 * 24 * 365 * 100;
 
     public AuthResponseDto auth(AuthRequestDto loginRequestDto) {
 
@@ -81,26 +79,11 @@ public class AuthService {
 
                     // AccessToken 생성
                     String accessToken = JwtTokenUtil.createToken(student.getId(), secretKey, accessTokenExpiry);
+                    String newRefreshToken = JwtTokenUtil.createRefreshToken(student.getId(), secretKey, refreshTokenExpiry);
 
-                    // 기존에 발급된 RefreshToken이 있는지 확인
-                    Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByStudent(student);
-                    String refreshToken;
-                    if (optionalRefreshToken.isPresent()) {
-                        // 기존 RefreshToken이 있다면, 만료 시간을 업데이트
-                        RefreshToken existingRefreshToken = optionalRefreshToken.get();
-                        existingRefreshToken.updateExpiryDate(LocalDateTime.now().plusDays(7));
-                        refreshToken = existingRefreshToken.getToken();
-                    } else {
-                        // 기존 RefreshToken이 없다면, 새로 생성
-                        refreshToken = JwtTokenUtil.createRefreshToken(student.getId(), secretKey, refreshTokenExpiry);
-                        RefreshToken refreshTokenEntity = RefreshToken
-                                .builder()
-                                .student(student)
-                                .token(refreshToken)
-                                .expiryDate(LocalDateTime.now().plusDays(7))
-                                .build();
-                        refreshTokenRepository.save(refreshTokenEntity);
-                    }
+                    // 기존 refreshToken 삭제
+                    RefreshToken refreshToken = refreshTokenRepository.findByStudent(student).get();
+                    refreshTokenRepository.delete(refreshToken);
 
                     // AuthResponseDto에 토큰 정보 추가
                     return AuthResponseDto.builder()
@@ -109,7 +92,7 @@ public class AuthService {
                             .name((String) body.get("name"))
                             .isJoined(isJoined)
                             .accessToken(accessToken)
-                            .refreshToken(refreshToken)
+                            .refreshToken(newRefreshToken)
                             .build();
                 }
             }
