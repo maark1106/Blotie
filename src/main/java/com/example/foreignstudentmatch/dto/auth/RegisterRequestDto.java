@@ -20,5 +20,5 @@ public class RegisterRequestDto {
     private String mbti;
     private List<String> interestsEnglish;
     private List<String> interestsKorean;
-    private boolean isKorean;
+    private boolean korean;
 }

@@ -1,5 +1,6 @@
 package com.example.foreignstudentmatch.config;
 
+import com.example.foreignstudentmatch.repository.RefreshTokenRepository;
 import com.example.foreignstudentmatch.security.CustomUserDetailService;
 import com.example.foreignstudentmatch.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final CustomUserDetailService customUserDetailService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -25,15 +27,16 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/auth").permitAll()
-                .requestMatchers("/register").permitAll()
-//                .requestMatchers("/ws/chat/**").permitAll()
-//                .requestMatchers("/api/**").authenticated() // /api/** 경로는 인증 필요
+                .requestMatchers("/login").permitAll()
+//                .requestMatchers("/api/**").permitAll()
+//                .requestMatchers("/api/feed/save").permitAll()
+//                .requestMatchers("/api/feed").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // 세션을 사용하지 않음
 
         // JWT 필터 추가
-        http.addFilterBefore(new JwtAuthenticationFilter(customUserDetailService), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(customUserDetailService, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
