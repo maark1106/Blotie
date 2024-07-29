@@ -24,6 +24,7 @@ class DevEnvLoader {
 
 		for (DotenvEntry entry : dotenv.entries()) {
 			System.setProperty(entry.getKey(), entry.getValue());
+			System.out.println("Setting environment variable: " + entry.getKey() + "=" + entry.getValue());
 		}
 	}
 }
