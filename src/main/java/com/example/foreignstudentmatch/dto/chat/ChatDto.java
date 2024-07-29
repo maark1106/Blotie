@@ -29,4 +29,8 @@ public class ChatDto {
         this.message = message;
         this.time = new Timestamp(System.currentTimeMillis()).toString();
     }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 }

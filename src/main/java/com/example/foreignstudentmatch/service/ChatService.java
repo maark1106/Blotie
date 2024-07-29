@@ -22,6 +22,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -58,6 +59,8 @@ public class ChatService {
 
         Student sender = studentRepository.findById(chatDto.getStudentId())
                 .orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
+
+        chatDto.setTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
 
         if (chatDto.getType().equals(ChatDto.MessageType.ENTER)) {
             sessionsPerRoom.computeIfAbsent(chatRoom.getId(), k -> new HashSet<>()).add(session);

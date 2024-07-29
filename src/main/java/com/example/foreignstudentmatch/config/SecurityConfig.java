@@ -25,12 +25,8 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/auth").permitAll()
-                .requestMatchers("/login").permitAll()
-//                .requestMatchers("/api/**").permitAll()
-//                .requestMatchers("/api/feed/save").permitAll()
-//                .requestMatchers("/api/feed").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**",
+                        "/auth", "/login","/ws/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // 세션을 사용하지 않음
