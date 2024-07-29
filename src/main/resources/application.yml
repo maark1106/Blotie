@@ -58,7 +58,7 @@ server:
 cloud:
   aws:
     region:
-      static: ap-southeast-2
+      static: ${AWS_REGION}
     stack:
       auto: false
     s3:
