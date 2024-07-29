@@ -42,7 +42,7 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: ${MYSQL_URL}
+    url: jdbc:mysql://ip-172-31-2-78.ap-northeast-2.compute.internal:3306/blotie
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
