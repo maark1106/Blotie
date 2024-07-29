@@ -13,7 +13,7 @@ SET @student_id_2 = LAST_INSERT_ID();
 
 INSERT INTO student (name, school, major, student_number, grade, mbti, language, interests_korean, interests_english, is_korean, profile_image, create_date, modified_date, matched_at)
 VALUES
-    ('한명수', '세종대학교', '컴퓨터공학과', '20011591', 4, 'ISTP', '["Korean", "English"]', '["게임", "독서"]', '["Gaming", "Reading"]', true, 'https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%ED%94%84%EB%A1%9C%ED%95%843.png', '2024/07/08 14:00:00', '2024/07/08 14:00:00', '2024/07/07 14:00:00');
+    ('한명수', '세종대학교', '컴퓨터공학과', '12345678', 4, 'ISTP', '["Korean", "English"]', '["게임", "독서"]', '["Gaming", "Reading"]', true, 'https://blotie.s3.ap-southeast-2.amazonaws.com/profile_image/%ED%94%84%EB%A1%9C%ED%95%843.png', '2024/07/08 14:00:00', '2024/07/08 14:00:00', '2024/07/07 14:00:00');
 
 SET @student_id_3 = LAST_INSERT_ID();
 

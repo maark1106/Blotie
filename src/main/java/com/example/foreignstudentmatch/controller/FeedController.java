@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/feed")
+@RequestMapping("/feed")
 @RequiredArgsConstructor
 public class FeedController {
 
