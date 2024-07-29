@@ -12,6 +12,7 @@ public class DevEnvLoader {
 
     @PostConstruct
     public void init() {
+        System.out.println("****************************************************");
         Dotenv dotenv = Dotenv.configure().directory("/home/ec2-user/Blotie/.env").load();
 
         for (DotenvEntry entry : dotenv.entries()) {
