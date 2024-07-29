@@ -12,7 +12,7 @@ public class DevEnvLoader {
 
     @PostConstruct
     public void init() {
-        Dotenv dotenv = Dotenv.configure().directory("/home/ec2-user/Blotie").load();
+        Dotenv dotenv = Dotenv.configure().directory("/home/ec2-user/Blotie/.env").load();
 
         for (DotenvEntry entry : dotenv.entries()) {
             System.setProperty(entry.getKey(), entry.getValue());
