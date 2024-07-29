@@ -15,3 +15,16 @@ public class ForeignStudentMatchApplication {
 	}
 
 }
+
+@Component
+@Profile("dev")
+class DevEnvLoader {
+	public static void loadEnv() {
+		Dotenv dotenv = Dotenv.configure().directory("/home/ec2-user/Blotie/.env").load();
+
+		for (DotenvEntry entry : dotenv.entries()) {
+			System.setProperty(entry.getKey(), entry.getValue());
+			System.out.println("Setting environment variable: " + entry.getKey() + "=" + entry.getValue());
+		}
+	}
+}
