@@ -11,7 +11,6 @@ import com.example.foreignstudentmatch.repository.RefreshTokenRepository;
 import com.example.foreignstudentmatch.repository.StudentRepository;
 import com.example.foreignstudentmatch.security.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -79,11 +78,8 @@ public class AuthService {
 
                     // AccessToken 생성
                     String accessToken = JwtTokenUtil.createToken(student.getId(), secretKey, accessTokenExpiry);
-                    String newRefreshToken = JwtTokenUtil.createRefreshToken(student.getId(), secretKey, refreshTokenExpiry);
-
-                    // 기존 refreshToken 삭제
                     RefreshToken refreshToken = refreshTokenRepository.findByStudent(student).get();
-                    refreshTokenRepository.delete(refreshToken);
+
 
                     // AuthResponseDto에 토큰 정보 추가
                     return AuthResponseDto.builder()
@@ -92,7 +88,7 @@ public class AuthService {
                             .name((String) body.get("name"))
                             .isJoined(isJoined)
                             .accessToken(accessToken)
-                            .refreshToken(newRefreshToken)
+                            .refreshToken(refreshToken.getToken())
                             .build();
                 }
             }
