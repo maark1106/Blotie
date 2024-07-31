@@ -31,20 +31,20 @@ public class FeedService {
     private final UploadImageRepository uploadImageRepository;
     private final LikeRepository likeRepository;
 
-    public FeedSaveResponseDto saveFeed(Long studentId, String title, String content, List<MultipartFile> images) throws IOException {
+    public FeedSaveResponseDto saveFeed(Long studentId, FeedRequestDto feedRequestDto) throws IOException {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
 
         Feed feed = Feed.builder()
-                .title(title)
-                .content(content)
+                .title(feedRequestDto.getTitle())
+                .content(feedRequestDto.getContent())
                 .student(student)
                 .build();
 
         feedRepository.save(feed);
 
-        if (images != null && !images.isEmpty()) {
-            uploadImages(images, feed);
+        if (feedRequestDto.getImages() != null && !feedRequestDto.getImages().isEmpty()) {
+            uploadImages(feedRequestDto.getImages(), feed);
         }
 
         return new FeedSaveResponseDto(feed.getId());
@@ -216,6 +216,7 @@ public class FeedService {
                 .isLike(isLike)
                 .commentsCount(feed.getCommentCount())
                 .comments(comments)
+                .likeCount(feed.getLikeCount())
                 .build();
     }
 }

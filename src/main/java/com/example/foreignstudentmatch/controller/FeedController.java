@@ -25,7 +25,7 @@ public class FeedController {
             @StudentId Long studentId,
             @ModelAttribute FeedRequestDto feedRequestDto
     ) throws IOException {
-        return new ResponseDto<>(feedService.saveFeed(studentId, feedRequestDto.getTitle(), feedRequestDto.getContent(), feedRequestDto.getImages()));
+        return new ResponseDto<>(feedService.saveFeed(studentId, feedRequestDto));
     }
 
     @GetMapping
