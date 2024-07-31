@@ -3,6 +3,7 @@ package com.example.foreignstudentmatch.controller;
 import com.example.foreignstudentmatch.annotation.StudentId;
 import com.example.foreignstudentmatch.dto.ResponseDto;
 import com.example.foreignstudentmatch.dto.auth.RegisterResponseDto;
+import com.example.foreignstudentmatch.dto.feed.FeedRequestDto;
 import com.example.foreignstudentmatch.dto.feed.FeedUpdateRequestDto;
 import com.example.foreignstudentmatch.service.FeedService;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,9 @@ public class FeedController {
     @PostMapping
     public ResponseDto<?> saveFeed(
             @StudentId Long studentId,
-            @RequestParam("title") String title,
-            @RequestParam("content") String content,
-            @RequestParam(value = "images", required = false) List<MultipartFile> images
+            @ModelAttribute FeedRequestDto feedRequestDto
     ) throws IOException {
-        return new ResponseDto<>(feedService.saveFeed(studentId, title, content, images));
+        return new ResponseDto<>(feedService.saveFeed(studentId, feedRequestDto.getTitle(), feedRequestDto.getContent(), feedRequestDto.getImages()));
     }
 
     @GetMapping

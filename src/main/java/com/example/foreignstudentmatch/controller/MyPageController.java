@@ -13,8 +13,8 @@ public class MyPageController {
 
     private final MyPageService MyPageService;
 
-    @GetMapping("/{studentId}")
-    public ResponseDto<?> getStudentMyPage(@StudentId Long id, @PathVariable("studentId") Long studentId) {
-        return new ResponseDto<>(MyPageService.getStudentMyPage(studentId));
+    @GetMapping("/{id}")
+    public ResponseDto<?> getStudentMyPage(@StudentId Long studentId, @PathVariable("id") Long id) {
+        return new ResponseDto<>(MyPageService.getStudentMyPage(id));
     }
 }
