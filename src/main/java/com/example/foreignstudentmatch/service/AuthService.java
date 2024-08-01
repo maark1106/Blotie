@@ -83,6 +83,7 @@ public class AuthService {
 
                     // AuthResponseDto에 토큰 정보 추가
                     return AuthResponseDto.builder()
+                            .studentId(student.getId())
                             .grade((String) body.get("grade"))
                             .major((String) body.get("major"))
                             .name((String) body.get("name"))
