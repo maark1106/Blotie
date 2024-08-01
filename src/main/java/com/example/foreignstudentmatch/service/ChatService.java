@@ -57,14 +57,15 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findById(chatDto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("채팅방을 찾을 수 없습니다."));
 
-        Student sender = studentRepository.findById(chatDto.getStudentId())
+        Student student = studentRepository.findById(chatDto.getStudentId())
                 .orElseThrow(() -> new IllegalArgumentException("학생을 찾을 수 없습니다."));
 
         chatDto.setTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
+        chatDto.setSender(student.getName());
 
         if (chatDto.getType().equals(ChatDto.MessageType.ENTER)) {
             sessionsPerRoom.computeIfAbsent(chatRoom.getId(), k -> new HashSet<>()).add(session);
-            chatDto.setMessage(sender.getName() + " 님이 입장하였습니다.");
+            chatDto.setMessage(student.getName() + " 님이 입장하였습니다.");
             sendMessageToRoom(chatRoom.getId(), chatDto);
         } else if (chatDto.getType().equals(ChatDto.MessageType.TALK)) {
             saveMessage(chatDto);

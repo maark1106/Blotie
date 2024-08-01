@@ -18,6 +18,7 @@ public class ChatDto {
     private MessageType type;  // 메시지 타입 (입장, 채팅)
     private Long roomId;     // 방 번호
     private Long studentId;    // 메시지 발송자 ID
+    private String sender;
     private String message;    // 메시지 내용
     private String time;       // 메시지 발송 시간
 
